@@ -1,0 +1,81 @@
+hub:
+  baseUrl: /jupyter
+  cookieSecret: 0e832f94c0b947516be269d893d96b82de4f763d600f94420b230d28dde7133b
+  db:
+    upgrade: true
+    pvc:
+      storage: 50Gi
+      storageClassName: gp3
+  authenticatePrometheus: false
+  config:
+      GenericOAuthenticator:
+        client_id: jupyter
+        client_secret: e6YPgXsMdTLofyGBiXabAykMrSxwRkzE
+        #oauth_callback_url: https://jhubnlb.mlopsbook.online/hub/oauth_callback
+        oauth_callback_url: https://jhubnlb.mlopsbook.online/jupyter/hub/oauth_callback
+        authorize_url: https://platform.mlopsbook.online/realms/master/protocol/openid-connect/auth
+        token_url: https://platform.mlopsbook.online/realms/master/protocol/openid-connect/token
+        userdata_url: https://platform.mlopsbook.online/realms/master/protocol/openid-connect/userinfo
+        logout_redirect_url: https://platform.mlopsbook.online/realms/master/protocol/openid-connect/logout?post_logout_rediret_uri=https://jhubnlb.mlopsbook.online/&client_id=jupyter
+        login_service: keycloak
+        username_claim: preferred_username
+        #tls_verify: false
+        enable_auth_state: true
+        claim_groups_key: roles
+        userdata_params:
+          state: state
+        scope:
+        - openid
+        allowed_users:
+        - realz
+        admin_users:
+        - realz
+      JupyterHub:
+        authenticator_class: generic-oauth
+
+cull:
+  enabled: true
+  timeout: 120
+  every: 120
+  maxAge: 3600     
+
+singleuser:
+  cloudMetadata:
+    # block set to true will append a privileged initContainer using the
+    # iptables to block the sensitive metadata server at the provided ip.
+    blockWithIptables: true
+    ip: 169.254.169.254
+  networkPolicy:
+    enabled: true
+    ingress: []
+    egress:
+      # Required egress to communicate with the hub and DNS servers will be
+      # augmented to these egress rules.
+      #
+      # This default rule explicitly allows all outbound traffic from singleuser
+      # pods, except to a typical IP used to return metadata that can be used by
+      # someone with malicious intent.
+      - to:
+          - ipBlock:
+              cidr: 0.0.0.0/0
+              except:
+                - 169.254.169.254/32
+proxy:
+  service:
+    type: LoadBalancer
+    # Disabled LoadBalancer type
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-west-2:096198301477:certificate/b2a25df9-e051-4308-a213-f3ac610ef1f1
+      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "tcp"
+#      service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+#      service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+#      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+      #      service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: proxy_protocol_v2.enabled=true
+#      service.beta.kubernetes.io/aws-load-balancer-ip-address-type: ipv4
+  https:
+    enabled: true
+    type: offload
