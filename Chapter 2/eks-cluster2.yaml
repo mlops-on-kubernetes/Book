@@ -1,0 +1,27 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: ml-on-kubernetes #A 
+  region: us-west-2 #B
+  version: "1.28" #C
+managedNodeGroups:
+  - name: mng1
+    instanceType: m5.large #D
+    minSize: 1 #E
+    maxSize: 2 #F
+    desiredCapacity: 1
+    volumeSize: 100 #G
+iam:
+  withOIDC: true #H
+addons:
+  - name: aws-ebs-csi-driver #I
+    version: latest
+    attachPolicyARNs:
+    - arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+  - name: vpc-cni #J
+    version: latest
+  - name: coredns #K
+    version: latest 
+  - name: kube-proxy #L
+    version: latest
+

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  labels:
+    app: my-pod
+spec:
+  containers:
+  - name: webserver
+    image: nginx:stable
+  - name: sidecar-container
+    image: quay.io/curl/curl:8.6.0
+    command: ["/bin/sleep", "infinity"]
