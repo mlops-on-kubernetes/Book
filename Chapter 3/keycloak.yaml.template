@@ -54,7 +54,7 @@ spec:
             - name: KC_METRICS_ENABLED
               value: "true"
             - name: KC_HOSTNAME
-              value: auth.mlopsbook.online
+              value: $KEYCLOAK_HOSTNAME
             - name: KC_PROXY
               value: "edge"
             - name: KC_DB
@@ -99,11 +99,11 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
     alb.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:096198301477:certificate/b2a25df9-e051-4308-a213-f3ac610ef1f1
+    alb.ingress.kubernetes.io/certificate-arn: $ACM_CERT_ARN
 spec:
   ingressClassName: alb
   rules:
-    - host: auth.mlopsbook.online
+    - host: $KEYCLOAK_HOSTNAME
       http:
         paths:
           - pathType: Prefix

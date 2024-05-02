@@ -22,8 +22,8 @@ while [[ -z "$CNAME_NAME" ]]; do
     echo "CNAME_NAME is empty. Retrying in 5 seconds..."
     sleep 5
   fi
-done
 
+done
 
 CNAME_VALUE="$(aws acm describe-certificate \
   --certificate-arn "${CERT_ARN}" \
@@ -35,8 +35,7 @@ HOSTED_ZONE_ID="$(aws route53 list-hosted-zones-by-name \
   --query "HostedZones[?Name=='$1.'].Id" \
   --output text)"
 
-echo Hosted zone id is $HOSTED_ZONE_ID
-HOSTED_ZONE_ID="${HOSTED_ZONE_ID##*/}"
+HOSTED_ZONE_ID=${HOSTED_ZONE_ID##*/}
 
 CHANGE_BATCH=$(cat <<EOM
   {
@@ -59,8 +58,6 @@ CHANGE_BATCH=$(cat <<EOM
 EOM
 )
 
-echo $CHANGE_BATCH | jq
-echo Hosted zone id is $HOSTED_ZONE_ID
 
 CHANGE_BATCH_REQUEST_ID=$(aws route53 change-resource-record-sets \
   --hosted-zone-id "${HOSTED_ZONE_ID}" \
@@ -68,3 +65,14 @@ CHANGE_BATCH_REQUEST_ID=$(aws route53 change-resource-record-sets \
   --query "ChangeInfo.Id" \
   --output text)
 
+echo "[ACM]          Waiting for certificate to be validated. This can take a few minutes..."
+aws acm wait certificate-validated \
+  --certificate-arn "${CERT_ARN}"
+
+ACM_CERTIFICATE_STATUS="$(aws acm describe-certificate \
+  --certificate-arn "${CERT_ARN}" \
+  --query "Certificate.Status" \
+  --output text)"
+
+echo $ACM_CERTIFICATE_STATUS
+echo $CERT_ARN 
