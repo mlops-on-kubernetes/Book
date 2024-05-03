@@ -22,7 +22,7 @@ CHANGE_BATCH=$(cat <<EOM
         "Action": "CREATE",
         "ResourceRecordSet": {
           "Name": "${KEYCLOAK_HOSTNAME}",
-          "Type": "CNAME",
+          "Type": "A",
           "AliasTarget": {
             "HostedZoneId": "${ALB_HOSTED_ZONE}",
             "DNSName": "${ALB_ADDRESS}",
