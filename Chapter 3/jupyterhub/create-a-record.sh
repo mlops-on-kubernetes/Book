@@ -1,3 +1,8 @@
+#!/usr/bin/env bash
+###
+# This script adds an alias A record in Route 53 hosted zone. 
+# Usage: create-a-record.sh <domain name (www.example.com)> <host>
+###
 
 HOSTED_ZONE_ID="$(aws route53 list-hosted-zones-by-name \
   --dns-name "$1" \
@@ -6,14 +11,13 @@ HOSTED_ZONE_ID="$(aws route53 list-hosted-zones-by-name \
 
 HOSTED_ZONE_ID=${HOSTED_ZONE_ID##*/}
 
-ALB_ADDRESS=$(kubectl -n keycloak get ingress auth-ingress \
-  -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+NLB_ADDRESS=$(kubectl get service -n kube-system ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 
-ALB_HOSTED_ZONE=$(aws elbv2 describe-load-balancers \
-  --query "LoadBalancers[?DNSName=='${ALB_ADDRESS}'].CanonicalHostedZoneId" \
+NLB_HOSTED_ZONE=$(aws elbv2 describe-load-balancers \
+  --query "LoadBalancers[?DNSName=='${NLB_ADDRESS}'].CanonicalHostedZoneId" \
   --output text)
 
-KEYCLOAK_HOSTNAME=auth.$1
+HOST=$2.$1
 
 CHANGE_BATCH=$(cat <<EOM
   {
@@ -21,11 +25,11 @@ CHANGE_BATCH=$(cat <<EOM
       {
         "Action": "CREATE",
         "ResourceRecordSet": {
-          "Name": "${KEYCLOAK_HOSTNAME}",
+          "Name": "${HOST}",
           "Type": "A",
           "AliasTarget": {
-            "HostedZoneId": "${ALB_HOSTED_ZONE}",
-            "DNSName": "${ALB_ADDRESS}",
+            "HostedZoneId": "${NLB_HOSTED_ZONE}",
+            "DNSName": "${NLB_ADDRESS}",
             "EvaluateTargetHealth": false
           }
         }

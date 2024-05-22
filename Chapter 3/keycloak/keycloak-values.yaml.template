@@ -1,0 +1,32 @@
+global:
+  storageClass: "gp3"
+
+image:
+  digest: sha256:faa80eaca01baa474ef8b03a8797729b98ab6f498329331a179303ddba41da62
+
+auth:
+  adminUser: mladmin
+  adminPassword: mladmin
+
+proxy: edge
+
+postgresql:
+  auth:
+    password: Str0ngP0stge-pas_w0rd
+  
+ingress:
+  enabled: true
+  hostname: auth.mlopsbook.online
+  ingressClassName: nginx
+  #annotations:
+  #  nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+  #  use-forwarded-headers: "true"
+
+
+extraEnvVars:
+  - name: KC_HOSTNAME_STRICT_HTTPS
+    value: "true"
+  - name: KC_HOSTNAME_ADMIN_URL
+    value: "https://${KEYCLOAK_HOSTNAME}"
+  - name: KC_HOSTNAME_URL
+    value: "https://${KEYCLOAK_HOSTNAME}" 

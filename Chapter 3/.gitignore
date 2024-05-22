@@ -1,1 +1,4 @@
 keycloak.yaml
+*.tfstate
+*.tfstate.backup
+

@@ -1,0 +1,102 @@
+hub:
+  baseUrl: /jupyter
+  cookieSecret: ${JH_COOKIE_SECRET}
+  db:
+    upgrade: true
+    pvc:
+      storage: 50Gi
+      storageClassName: gp2
+  authenticatePrometheus: false
+  config:
+      GenericOAuthenticator:
+        client_id: jupyter
+        client_secret: ${JUPYTER_CLIENT_SECRET}
+        oauth_callback_url: https://${JH_HOSTNAME}/jupyter/hub/oauth_callback
+        authorize_url: https://${KEYCLOAK_HOSTNAME}/realms/master/protocol/openid-connect/auth
+        token_url: https://${KEYCLOAK_HOSTNAME}/realms/master/protocol/openid-connect/token
+        userdata_url: https://${KEYCLOAK_HOSTNAME}/realms/master/protocol/openid-connect/userinfo
+        logout_redirect_url: https://${KEYCLOAK_HOSTNAME}/realms/master/protocol/openid-connect/logout?post_logout_rediret_uri=https://${JH_HOSTNAME}/jupyter/&client_id=jupyter
+        login_service: keycloak
+        username_claim: preferred_username
+        #tls_verify: false
+        enable_auth_state: true
+        claim_groups_key: roles
+        userdata_params:
+          state: state
+        scope:
+        - openid
+        allowed_users:
+        - mluser
+        admin_users:
+        - mluser
+      JupyterHub:
+        authenticator_class: generic-oauth
+
+cull:
+  enabled: true
+  timeout: 3600
+  every: 120
+  maxAge: 604800
+
+singleuser:
+  profileList:
+    - display_name: "All Spark environment"
+      description: "Python, Scala, R and Spark Jupyter Notebook Stack"
+      default: true
+      kubespawner_override:
+        image: jupyter/all-spark-notebook
+      cpu_limit: 2
+      mem_limit: 4G
+    - display_name: "Python only"
+      description: "Data Science Jupyter Notebook Python Stack"
+      kubespawner_override:
+        image: jupyter/datascience-notebook
+      cpu_limit: 2
+      mem_limit: 4G
+    - display_name: "TensorFlow with GPU"
+      description: "Jupyter Notebook Python Stack with TensorFlow"
+      kubespawner_override:
+        image: jupyter/tensorflow-notebook
+        extra_resource_guarantees:
+          nvidia.com/gpu: "1"
+        extra_resource_limits:
+          nvidia.com/gpu: "1"
+      cpu_limit: 2
+      mem_limit: 4G
+  startTimeout: 600
+  cloudMetadata:
+    # block set to true will append a privileged initContainer using the
+    # iptables to block the sensitive metadata server at the provided ip.
+    blockWithIptables: true
+    ip: 169.254.169.254
+  networkPolicy:
+    enabled: true
+    ingress: []
+    egress:
+      # Required egress to communicate with the hub and DNS servers will be
+      # augmented to these egress rules.
+      #
+      # This default rule explicitly allows all outbound traffic from singleuser
+      # pods, except to a typical IP used to return metadata that can be used by
+      # someone with malicious intent.
+      - to:
+          - ipBlock:
+              cidr: 0.0.0.0/0
+              except:
+                - 169.254.169.254/32
+proxy:
+  service:
+    type: ClusterIP
+  https:
+    enabled: false
+
+ingress:
+  enabled: true
+  annotations: {}
+  ingressClassName: nginx
+  hosts:
+    - ${JH_HOSTNAME} 
+
+prePuller:
+  hook:
+    enabled: false
