@@ -1,0 +1,30 @@
+driver:
+  enabled: false
+
+mig:
+  strategy: mixed
+
+devicePlugin:
+  enabled: true
+  version: v0.13.0
+
+migManager:
+  enabled: true
+  default: all-balanced
+  WITH_REBOOT: true
+
+toolkit:
+  version: v1.13.1-centos7
+
+operator:
+  defaultRuntime: containerd
+  runtimeClassName: nvidia
+  #tolerations:
+  #- key: "karpenter.sh/controller"
+  #  operator: "Equal"
+  #  value: "true"
+  #  effect: "NoSchedule"
+
+
+gfd:
+  version: v0.15.0-ubi8 #v0.8.0

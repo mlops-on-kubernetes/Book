@@ -61,6 +61,10 @@ singleuser:
           nvidia.com/gpu: "1"
         extra_resource_limits:
           nvidia.com/gpu: "1"
+        tolerations:
+          - key: nvidia.com/gpu
+            operator: Exists
+            effect: NoSchedule
       cpu_limit: 2
       mem_limit: 4G
   startTimeout: 600
