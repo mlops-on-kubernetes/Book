@@ -103,6 +103,14 @@ module "ebs_csi_driver_irsa" {
  tags = local.tags
 }
 
+resource "kubernetes_storage_class" "ebs-gp3-sc" {
+  metadata {
+    name = "gp3"
+  }
+
+  storage_provisioner = "ebs.csi.aws.com"
+  reclaim_policy      = "Delete"
+}
 
 ################################################################################
 # EFS configuration
