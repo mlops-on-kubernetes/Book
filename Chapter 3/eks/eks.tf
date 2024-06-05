@@ -192,6 +192,12 @@ resource "kubernetes_storage_class" "efs" {
   }
 }
 
+resource "kubernetes_namespace" "jupyter" {
+  metadata {
+    name = "jupyter"
+  }
+}
+
 resource "kubernetes_persistent_volume_claim" "efs-pvc" {
   metadata {
     name = "efs-claim"
