@@ -75,7 +75,7 @@ singleuser:
         claimName: efs-claim
     extraVolumeMounts:
     - name: jupyterhub-shared
-      mountPath: /home/jovyan/shared
+      mountPath: /home/shared
       readOnly: false
   startTimeout: 600
   cloudMetadata:
