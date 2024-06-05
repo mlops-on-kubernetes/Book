@@ -1,12 +1,59 @@
+airflowVersion: "2.9.1"
+airflow:
+  config:
+    AIRFLOW__WEBSERVER__BASE_URL: https://platform.mlopsbook.online/airflow/
+    AIRFLOW__CORE__LOAD_EXAMPLES: true
+  
+  executor: "KubernetesExecutor"
+
+  ## the fernet encryption key (sets `AIRFLOW__CORE__FERNET_KEY`)
+  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/security/set-fernet-key.md
+  ## [WARNING] change from default value to ensure security
+  #fernetKey: String_SecretFerneyKey
+
+  ## the secret_key for flask (sets `AIRFLOW__WEBSERVER__SECRET_KEY`)
+  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/security/set-webserver-secret-key.md
+  ## [WARNING] change from default value to ensure security
+  #webserverSecretKey: String_SecretWebserverSecretKey
+
+
+dags:
+  gitSync:
+    enabled: false
+    repo: https://github.com/KubedAI/airflow-dags.git
+    branch: main
+    rev: HEAD
+    depth: 1
+    #persistence:
+    #enabled: true
+    #storageClassName: efs-sc
+    #accessMode: ReadOnlyMany
+    #existingClaim: airflow-efs-claim
+
+
+executor: "KubernetesExecutor"
+
+flower:
+  enabled: false
+
 ingress:
+  enabled: true
   web:
     enabled: true
     path: "/airflow"
+    pathType: "ImplementationSpecific"
+    host: "platform.mlopsbook.online"
     hosts:
       - name: "platform.mlopsbook.online"
         tls:
           enabled: false
     ingressClassName: "nginx"
+
+redis:
+  enabled: false
+
+workers:
+  replicas: 0
 
 web:
   webserverConfig:
@@ -15,101 +62,99 @@ web:
       import jwt
       import logging
       import os
+      import requests
+
+      from base64 import b64decode
+      from cryptography.hazmat.primitives import serialization
+      from tokenize import Exponent
 
       from flask_appbuilder import expose
       from flask_appbuilder.security.views import AuthOAuthView
-      
+
       from airflow.www.fab_security.manager import AUTH_OAUTH
-      from airflow.www.security import AirflowSecurityManager
-      
+      from authlib.integrations.flask_client import OAuth
+      #from airflow.www.security import AirflowSecurityManager
+      from airflow.auth.managers.fab.security_manager.override import FabAirflowSecurityManagerOverride
+
       log = logging.getLogger(__name__)
-      
-      MY_PROVIDER = "keycloak"
-      KEYCLOAK_CLIENT_ID = os.environ.get("airflow")
-      KEYCLOAK_CLIENT_SECRET = os.environ.get("iJNbWxkN7Ifi9uKEY0NRKAmBnEYkD0uf")
-      KEYCLOAK_BASE_URL = os.environ.get("https://auth.mlopsbook.online")
-      KEYCLOAK_TOKEN_URL = os.environ.get("https://auth.mlopsbook.online/realms/master/protocol/openid-connect/token")
-      KEYCLOAK_AUTH_URL = os.environ.get("https://auth.mlopsbook.online/realms/master/protocol/openid-connect/auth")
-      
-      # สำหรับ override ส่วน logout
-      class CustomAuthRemoteUserView(AuthOAuthView):
-          @expose("/logout/")
-          def logout(self):
-              """Delete access token before logging out."""
-              return super().logout()
-      
-      # สำหรับ override ในจังหวะที่เรา authenticate
-      class CustomSecurityManager(AirflowSecurityManager):
-          authoauthview = CustomAuthRemoteUserView
-      
-          def oauth_user_info(self, provider, response):
-              if provider == MY_PROVIDER:
-                  token = response["access_token"]
-                  me = jwt.decode(token, algorithms="RS256", verify=False)
-                  # หน้าตา resource_access
-                  # {
-                  #   "resource_access": { "airflow": { "roles": ["airflow_admin"] }}
-                  # }
-                  groups = me["resource_access"]["airflow"]["roles"]  # unsafe
-                  log.info("groups: {0}".format(groups))
-                  if len(groups) < 1:
-                      groups = ["airflow_public"]
-                  else:
-                      groups = [str for str in groups if "airflow" in str]
-      
-                  # ตรงนี้เราจำเป็นที่จะต้องแมพค่าต่างๆ ให้ Airflow ด้วย
-                  userinfo = {
-                      "username": me.get("preferred_username"),
-                      "email": me.get("email"),
-                      "first_name": me.get("given_name"),
-                      "last_name": me.get("family_name"),
-                      "role_keys": groups,
-                  }
-                  log.info("user info: {0}".format(userinfo))
-      
-                  return userinfo
-              else:
-                  return {}
-      
-      # บอก Airflow ว่าเราจะใช้ OAuth
+
       AUTH_TYPE = AUTH_OAUTH
       
-      # ถ้ายังไม่มี User ใน Airflow เลย เราจะให้สร้างใหม่
       AUTH_USER_REGISTRATION = True
-      # มี Role ใน Airflow พื้นฐานคือ Public
-      AUTH_USER_REGISTRATION_ROLE = "Public"
-      # เราจะบอกว่าเดี๋ยวเราจะ replace Role ใน Airflow ด้วย Role จาก OAuth
+      AUTH_USER_REGISTRATION_ROLE = "User"
       AUTH_ROLES_SYNC_AT_LOGIN = True
-      PERMANENT_SESSION_LIFETIME = 1800
-      
-      # ตรงนี้เราต้องทำ Role Mappings ด้วย ค่า key คือค่า role ที่มาจาก Keycloak ส่วน value คือ role ใน Airflow
+
       AUTH_ROLES_MAPPING = {
-          "airflow_admin": ["Admin"],
-          "airflow_op": ["Op"],
-          "airflow_user": ["User"],
-          "airflow_viewer": ["Viewer"],
-          "airflow_public": ["Public"],
+        "airflow_admin": ["Admin"],
+        "airflow_op": ["Op"],
+        "airflow_user": ["User"],
+        "airflow_viewer": ["Viewer"],
+        "airflow_public": ["Public"],
       }
-      
-      # เซตค่า OAUTH_PROVIDERS ด้วยค่าต่างๆ จาก Keycloak
-      # ดูเพิ่มเติมได้ที่ https://flask-appbuilder.readthedocs.io/en/latest/security.html#authentication-oauth
+
+
+      OIDC_ISSUER = "https://auth.mlopsbook.online/realms/master/"
+      CLIENT_ID = "airflow"
+      OIDC_PROVIDER = "keycloak"
+
       OAUTH_PROVIDERS = [{
           "name": "keycloak",
           "token_key": "access_token",
-          "icon": "fa-circle-o",
+          "icon": "fa-key",
           "remote_app": {
-              "api_base_url": KEYCLOAK_BASE_URL,
+              "api_base_url": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect",
               "client_kwargs": {
-                  "scope": "email profile"
+                  "scope": "email profile openid roles",
+                  'token_endpoint_auth_method': 'client_secret_post'
               },
-              "access_token_url": KEYCLOAK_TOKEN_URL,
-              "authorize_url": KEYCLOAK_AUTH_URL,
+              "access_token_url": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/token",
+              "authorize_url": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/auth",
               "request_token_url": None,
-              "client_id": KEYCLOAK_CLIENT_ID,
-              "client_secret": KEYCLOAK_CLIENT_SECRET,
+              "jwks_uri": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/certs",
+              "client_id": "airflow",
+              "client_secret": "iJNbWxkN7Ifi9uKEY0NRKAmBnEYkD0uf",
           }
       }]
-      
-      # Override ตัว security manager ให้ไปใช้คลาสที่เราสร้างขึ้น
+
+      req = requests.get(OIDC_ISSUER)
+      key_der_base64 = req.json()["public_key"]
+      key_der = b64decode(key_der_base64.encode())
+      public_key = serialization.load_der_public_key(key_der)
+
+      class CustomAuthRemoteUserView(AuthOAuthView):
+        @expose("/logout/")
+        def logout(self):
+          """Delete access token before logging out."""
+          return super().logout()
+
+          #class CustomSecurityManager(AirflowSecurityManager):
+      class CustomSecurityManager(FabAirflowSecurityManagerOverride):
+        authoauthview = CustomAuthRemoteUserView
+
+        def oauth_user_info(self, provider, response):
+          if provider == "keycloak":
+            token = response["access_token"]
+            me = jwt.decode(token, public_key, algorithms=['HS256', 'RS256'], audience=CLIENT_ID)
+            # sample of resource_access
+            # {
+            #   "resource_access": { "airflow": { "roles": ["airflow_admin"] }}
+            # }
+            log.info(me)
+            groups = me["resource_access"]["airflow"]["roles"] # unsafe
+            if len(groups) < 1:
+                groups = ["airflow_public"]
+            else:
+                groups = [str for str in groups if "airflow" in str]
+            userinfo = {
+                "username": me.get("preferred_username"),
+                "email": me.get("email"),
+                "first_name": me.get("given_name"),
+                "last_name": me.get("family_name"),
+                "role_keys": groups,
+            }
+            log.info("user info: {0}".format(userinfo))
+            return userinfo
+          else:
+            return {}
       SECURITY_MANAGER_CLASS = CustomSecurityManager
 

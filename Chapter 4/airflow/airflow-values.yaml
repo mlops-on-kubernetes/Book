@@ -1,64 +1,49 @@
 airflowVersion: "2.9.1"
-airflow:
-  config:
-    AIRFLOW__WEBSERVER__BASE_URL: https://platform.mlopsbook.online/airflow
-    AIRFLOW__CORE__LOAD_EXAMPLES: true
-  
-  executor: "KubernetesExecutor"
-
-  ## the fernet encryption key (sets `AIRFLOW__CORE__FERNET_KEY`)
-  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/security/set-fernet-key.md
-  ## [WARNING] change from default value to ensure security
-  fernetKey: String_SecretFerneyKey
-
-  ## the secret_key for flask (sets `AIRFLOW__WEBSERVER__SECRET_KEY`)
-  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/security/set-webserver-secret-key.md
-  ## [WARNING] change from default value to ensure security
-  webserverSecretKey: String_SecretWebserverSecretKey
+webserverSecretKey: secretAirflowWebserverSecretKey
+executor: "KubernetesExecutor"
 
 dags:
+  mountPath: "/opt/airflow/dags"
   gitSync:
-    enabled: true
+    enabled: false
     repo: https://github.com/KubedAI/airflow-dags.git
     branch: main
     rev: HEAD
     depth: 1
   persistence:
-    enabled: false
+    enabled: true
+    storageClassName: efs-sc
+    accessMode: ReadOnlyMany
+    existingClaim: airflow-efs-claim
 
-executor: "KubernetesExecutor"
-
-flower:
-  enabled: false
+worker:
+  replicas: 0
 
 ingress:
-  enabled: true
   web:
     enabled: true
     path: "/airflow"
-    pathType: "Prefix"
-    host: "platform.mlopsbook.online"
     hosts:
       - name: "platform.mlopsbook.online"
         tls:
           enabled: false
     ingressClassName: "nginx"
+  flower:
+    enabled: false
 
-redis:
-  enabled: false
+config: 
+  webserver:
+#   enable_proxy_fix: true
+   base_url: "https://platform.mlopsbook.online/airflow"
 
-scheduler:
-  logCleanup:
-    enabled: true
-    retentionMinutes: 21600
-
-workers:
-  enabled: false
-
-web:
-  webserverConfig:
-    enabled: true
-    stringOverride: |
+   #web:
+  #base_url: "https://platform.mlopsbook.online/airflow"
+  #extraEnvVars:
+  #  - name: AIRFLOW_BASE_URL
+  #    value: "https://platform.mlopsbook.online/airflow"
+  #
+webserver:
+  webserverConfig: | 
       import jwt
       import logging
       import os
@@ -79,10 +64,9 @@ web:
       log = logging.getLogger(__name__)
 
       AUTH_TYPE = AUTH_OAUTH
-      
+
       AUTH_USER_REGISTRATION = True
       AUTH_USER_REGISTRATION_ROLE = "User"
-      #AUTH_USER_REGISTRATION_ROLE = "User"
       AUTH_ROLES_SYNC_AT_LOGIN = True
 
       AUTH_ROLES_MAPPING = {
@@ -158,4 +142,3 @@ web:
           else:
             return {}
       SECURITY_MANAGER_CLASS = CustomSecurityManager
-
