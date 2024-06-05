@@ -16,7 +16,7 @@ postgresql:
   
 ingress:
   enabled: true
-  hostname: auth.mlopsbook.online
+  hostname: ${KEYCLOAK_HOSTNAME}
   ingressClassName: nginx
   #annotations:
   #  nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
