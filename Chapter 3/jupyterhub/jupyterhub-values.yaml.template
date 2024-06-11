@@ -67,7 +67,6 @@ singleuser:
             effect: NoSchedule
       cpu_limit: 2
       mem_limit: 4G
-  # Shared storage config
   storage:
     extraVolumes:
     - name: jupyterhub-shared
@@ -77,6 +76,21 @@ singleuser:
     - name: jupyterhub-shared
       mountPath: /home/shared
       readOnly: false
+    dynamic:
+      storageClass: gp3
+  allowPrivilegeEscalation: true
+  extraPodConfig:
+    securityContext:
+        fsGroup: 100
+  extraEnv:
+    GRANT_SUDO: "yes"
+    NOTEBOOK_ARGS: "--allow-root"
+    CHOWN_HOME: "yes"
+    CHOWN_HOME_OPTS: "-R"
+    CHOWN_EXTRA: "/home/shared/"
+  uid: 0
+  fsGid: 0
+  cmd: null
   startTimeout: 600
   cloudMetadata:
     # block set to true will append a privileged initContainer using the
