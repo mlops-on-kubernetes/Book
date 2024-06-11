@@ -25,6 +25,7 @@ hub:
           state: state
         scope:
         - openid
+        allow_all: true
         allowed_users:
         - mluser
         admin_users:
@@ -67,6 +68,7 @@ singleuser:
             effect: NoSchedule
       cpu_limit: 2
       mem_limit: 4G
+  # Shared storage config
   storage:
     extraVolumes:
     - name: jupyterhub-shared
@@ -81,7 +83,7 @@ singleuser:
   allowPrivilegeEscalation: true
   extraPodConfig:
     securityContext:
-        fsGroup: 100
+      fsGroup: 100
   extraEnv:
     GRANT_SUDO: "yes"
     NOTEBOOK_ARGS: "--allow-root"
