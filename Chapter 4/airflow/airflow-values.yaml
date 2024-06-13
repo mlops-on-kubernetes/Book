@@ -84,7 +84,6 @@ webserver:
 
       from airflow.www.fab_security.manager import AUTH_OAUTH
       from authlib.integrations.flask_client import OAuth
-      #from airflow.www.security import AirflowSecurityManager
       from airflow.auth.managers.fab.security_manager.override import FabAirflowSecurityManagerOverride
 
       log = logging.getLogger(__name__)
@@ -138,7 +137,6 @@ webserver:
           """Delete access token before logging out."""
           return super().logout()
 
-          #class CustomSecurityManager(AirflowSecurityManager):
       class CustomSecurityManager(FabAirflowSecurityManagerOverride):
         authoauthview = CustomAuthRemoteUserView
 
@@ -146,10 +144,6 @@ webserver:
           if provider == "keycloak":
             token = response["access_token"]
             me = jwt.decode(token, public_key, algorithms=['HS256', 'RS256'], audience=CLIENT_ID)
-            # sample of resource_access
-            # {
-            #   "resource_access": { "airflow": { "roles": ["airflow_admin"] }}
-            # }
             log.info(me)
             groups = me["resource_access"]["airflow"]["roles"] # unsafe
             if len(groups) < 1:
@@ -167,4 +161,5 @@ webserver:
             return userinfo
           else:
             return {}
+
       SECURITY_MANAGER_CLASS = CustomSecurityManager

@@ -46,7 +46,7 @@ module "eks" {
   subnet_ids = module.vpc.private_subnets
 
   eks_managed_node_groups = {
-    karpenter = {
+    static_ng = {
       instance_types = ["m5.large"]
 
       min_size     = 2
@@ -58,16 +58,6 @@ module "eks" {
         # Used to ensure Karpenter runs on nodes that it does not manage
         "karpenter.sh/controller" = "true"
       }
-
-      #taints = {
-      #  # The pods that do not tolerate this taint should run on nodes
-      #  # created by Karpenter
-      #  karpenter = {
-      #    key    = "karpenter.sh/controller"
-      #    value  = "true"
-      #    effect = "NO_SCHEDULE"
-      #  }
-      #}
     }
   }
 

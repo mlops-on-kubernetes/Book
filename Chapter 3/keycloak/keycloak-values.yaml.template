@@ -1,6 +1,7 @@
 global:
   storageClass: "gp3"
 
+# Make Keycloak image static
 image:
   digest: sha256:faa80eaca01baa474ef8b03a8797729b98ab6f498329331a179303ddba41da62
 
