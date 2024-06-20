@@ -10,7 +10,7 @@ cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: airflow-efs-pv
+  name: airflow-efs-shared
 spec:
   accessModes:
   - ReadWriteMany
@@ -28,7 +28,7 @@ cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: airflow-efs-claim
+  name: airflow-efs-shared
   namespace: airflow
 spec:
   accessModes:
@@ -38,5 +38,5 @@ spec:
       storage: 5Gi
   storageClassName: efs-sc
   volumeMode: Filesystem
-  volumeName: airflow-efs-pv
+  volumeName: airflow-efs-shared
 EOF

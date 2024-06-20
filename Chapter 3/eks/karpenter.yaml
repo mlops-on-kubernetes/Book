@@ -39,6 +39,9 @@ spec:
         - key: "karpenter.k8s.aws/instance-hypervisor"
           operator: In
           values: ["nitro"]
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
         - key: "karpenter.k8s.aws/instance-generation"
           operator: Gt
           values: ["2"]
@@ -68,6 +71,9 @@ spec:
         - key: "karpenter.k8s.aws/instance-hypervisor"
           operator: In
           values: ["nitro"]
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
         - key: "karpenter.k8s.aws/instance-generation"
           operator: Gt
           values: ["2"]

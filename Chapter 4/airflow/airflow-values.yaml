@@ -2,11 +2,12 @@ airflowVersion: "2.9.1"
 webserverSecretKey: secretAirflowWebserverSecretKey
 executor: "KubernetesExecutor"
 uid: 1000
+gid: 100
 
 volumes:
   - name: airflow-shared
     persistentVolumeClaim:
-      claimName: airflow-efs-claim
+      claimName: airflow-efs-shared
 
 volumeMounts:
   - name: airflow-shared
@@ -20,10 +21,15 @@ airflow:
   config:
     AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: 10
     AIRFLOW__LOGGING__BASE_LOG_FOLDER: /var/log/airflow
+    AIRFLOW__LOGGING__DAG_PROCESSOR_MANAGER_LOG_LOCATION: /var/log/airflow/dag_processor_manager/dag_processor_manager.log
+    AIRFLOW__SCHEDULER__CHILD_PROCESS_LOG_DIRECTORY: /var/log/airflow/scheduler
 
 config:
+  core:
+    min_serialized_dag_fetch_interval: 1
   logging:
     base_log_folder: /var/log/airflow
+    child_process_log_directory: /var/log/airflow/scheduler
   webserver:
     base_url: "https://platform.mlopsbook.online/airflow"
 
@@ -36,11 +42,7 @@ dags:
     branch: main
     rev: HEAD
     depth: 1
-    #persistence:
-    #enabled: true
-    #storageClassName: efs-sc
-    #accessMode: ReadOnlyMany
-    #existingClaim: airflow-efs-claim
+
 
 worker:
   replicas: 0
@@ -57,17 +59,22 @@ ingress:
   flower:
     enabled: false
 
-    #config: 
-# webserver:
-#   enable_proxy_fix: true
-#base_url: "https://platform.mlopsbook.online/airflow"
+#scheduler:
+  #extraInitContainers:
+  #  - name: fix-permissions
+  #    image: busybox
+  #    command:
+  #    - sh
+  #    - -c
+  #    - |
+  #      chown -R 1000:100 /mnt/shared-dir
+  #    securityContext:
+  #      runAsUser: 0
+  #    volumeMounts:
+  #    - name: airflow-shared
+  #      mountPath: /mnt/shared-dir
 
-   #web:
-  #base_url: "https://platform.mlopsbook.online/airflow"
-  #extraEnvVars:
-  #  - name: AIRFLOW_BASE_URL
-  #    value: "https://platform.mlopsbook.online/airflow"
-  #
+
 webserver:
   webserverConfig: | 
       import jwt
@@ -106,25 +113,36 @@ webserver:
       OIDC_ISSUER = "https://auth.mlopsbook.online/realms/master/"
       CLIENT_ID = "airflow"
       OIDC_PROVIDER = "keycloak"
-
+      
+      
+      access_token_url = "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/token"
+      api_base_url = "https://auth.mlopsbook.online/realms/master/protocol/openid-connect"
+      
+      authorize_url = "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/auth"
+      client_secret = "iJNbWxkN7Ifi9uKEY0NRKAmBnEYkD0uf"
+      jwks_uri = "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/certs"
+      
+    
       OAUTH_PROVIDERS = [{
           "name": "keycloak",
           "token_key": "access_token",
           "icon": "fa-key",
           "remote_app": {
-              "api_base_url": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect",
+              "api_base_url": api_base_url,
               "client_kwargs": {
                   "scope": "email profile openid roles",
                   'token_endpoint_auth_method': 'client_secret_post'
               },
-              "access_token_url": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/token",
-              "authorize_url": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/auth",
+              "access_token_url": access_token_url,
+              "authorize_url": authorize_url,
               "request_token_url": None,
-              "jwks_uri": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/certs",
+              "jwks_uri": jwks_uri,
+              "redirect_uri": "https://platform.mlopsbook.online/airflow/home",
               "client_id": "airflow",
-              "client_secret": "iJNbWxkN7Ifi9uKEY0NRKAmBnEYkD0uf",
+              "client_secret": client_secret,
           }
       }]
+
 
       req = requests.get(OIDC_ISSUER)
       key_der_base64 = req.json()["public_key"]
@@ -145,7 +163,7 @@ webserver:
             token = response["access_token"]
             me = jwt.decode(token, public_key, algorithms=['HS256', 'RS256'], audience=CLIENT_ID)
             log.info(me)
-            groups = me["resource_access"]["airflow"]["roles"] # unsafe
+            groups = me["resource_access"]["airflow"]["roles"]
             if len(groups) < 1:
                 groups = ["airflow_public"]
             else:

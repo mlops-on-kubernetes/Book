@@ -144,6 +144,11 @@ resource "aws_efs_file_system" "efs-share" {
 
 resource "aws_efs_access_point" "efs-ap" {
   file_system_id = aws_efs_file_system.efs-share.id
+  
+  posix_user {
+    gid = 100
+    uid = 1000
+  }
 }
 
 resource "aws_efs_mount_target" "efs-share" {

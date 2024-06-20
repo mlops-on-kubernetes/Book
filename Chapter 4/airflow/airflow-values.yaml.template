@@ -1,64 +1,59 @@
 airflowVersion: "2.9.1"
+webserverSecretKey: secretAirflowWebserverSecretKey
+executor: "KubernetesExecutor"
+uid: 1000
+
+volumes:
+  - name: airflow-shared
+    persistentVolumeClaim:
+      claimName: airflow-efs-claim
+
+volumeMounts:
+  - name: airflow-shared
+    mountPath: /opt/airflow/dags
+    subPath: airflow_home/dags
+  - name: airflow-shared
+    mountPath: /var/log/airflow
+    subPath: airflow_home/logs
+
 airflow:
   config:
-    AIRFLOW__WEBSERVER__BASE_URL: https://platform.mlopsbook.online/airflow/
-    AIRFLOW__CORE__LOAD_EXAMPLES: true
-  
-  executor: "KubernetesExecutor"
+    AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: 10
+    AIRFLOW__LOGGING__BASE_LOG_FOLDER: /var/log/airflow
 
-  ## the fernet encryption key (sets `AIRFLOW__CORE__FERNET_KEY`)
-  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/security/set-fernet-key.md
-  ## [WARNING] change from default value to ensure security
-  #fernetKey: String_SecretFerneyKey
-
-  ## the secret_key for flask (sets `AIRFLOW__WEBSERVER__SECRET_KEY`)
-  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/security/set-webserver-secret-key.md
-  ## [WARNING] change from default value to ensure security
-  #webserverSecretKey: String_SecretWebserverSecretKey
+config:
+  logging:
+    base_log_folder: /var/log/airflow
+  webserver:
+    base_url: "https://platform.${DOMAIN}/airflow"
 
 
 dags:
+  mountPath: "/opt/airflow/dags"
   gitSync:
     enabled: false
     repo: https://github.com/KubedAI/airflow-dags.git
     branch: main
     rev: HEAD
     depth: 1
-    #persistence:
-    #enabled: true
-    #storageClassName: efs-sc
-    #accessMode: ReadOnlyMany
-    #existingClaim: airflow-efs-claim
 
-
-executor: "KubernetesExecutor"
-
-flower:
-  enabled: false
+worker:
+  replicas: 0
 
 ingress:
-  enabled: true
   web:
     enabled: true
     path: "/airflow"
-    pathType: "ImplementationSpecific"
-    host: "platform.mlopsbook.online"
     hosts:
-      - name: "platform.mlopsbook.online"
+      - name: "platform.${DOMAIN}"
         tls:
           enabled: false
     ingressClassName: "nginx"
+  flower:
+    enabled: false
 
-redis:
-  enabled: false
-
-workers:
-  replicas: 0
-
-web:
-  webserverConfig:
-    enabled: true
-    stringOverride: |
+webserver:
+  webserverConfig: | 
       import jwt
       import logging
       import os
@@ -73,13 +68,12 @@ web:
 
       from airflow.www.fab_security.manager import AUTH_OAUTH
       from authlib.integrations.flask_client import OAuth
-      #from airflow.www.security import AirflowSecurityManager
       from airflow.auth.managers.fab.security_manager.override import FabAirflowSecurityManagerOverride
 
       log = logging.getLogger(__name__)
 
       AUTH_TYPE = AUTH_OAUTH
-      
+
       AUTH_USER_REGISTRATION = True
       AUTH_USER_REGISTRATION_ROLE = "User"
       AUTH_ROLES_SYNC_AT_LOGIN = True
@@ -93,28 +87,38 @@ web:
       }
 
 
-      OIDC_ISSUER = "https://auth.mlopsbook.online/realms/master/"
+      OIDC_ISSUER = "https://auth.${DOMAIN}/realms/master/"
       CLIENT_ID = "airflow"
       OIDC_PROVIDER = "keycloak"
-
+      
+      
+      access_token_url = "https://auth.${DOMAIN}/realms/master/protocol/openid-connect/token"
+      api_base_url = "https://auth.mlopsbook.online/realms/master/protocol/openid-connect"
+      
+      authorize_url = "https://auth.${DOMAIN}/realms/master/protocol/openid-connect/auth"
+      client_secret = "iJNbWxkN7Ifi9uKEY0NRKAmBnEYkD0uf"
+      jwks_uri = "https://auth.${DOMAIN}/realms/master/protocol/openid-connect/certs"
+      
+    
       OAUTH_PROVIDERS = [{
           "name": "keycloak",
           "token_key": "access_token",
           "icon": "fa-key",
           "remote_app": {
-              "api_base_url": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect",
+              "api_base_url": api_base_url,
               "client_kwargs": {
                   "scope": "email profile openid roles",
                   'token_endpoint_auth_method': 'client_secret_post'
               },
-              "access_token_url": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/token",
-              "authorize_url": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/auth",
+              "access_token_url": access_token_url,
+              "authorize_url": authorize_url,
               "request_token_url": None,
-              "jwks_uri": "https://auth.mlopsbook.online/realms/master/protocol/openid-connect/certs",
+              "jwks_uri": jwks_uri,
               "client_id": "airflow",
-              "client_secret": "iJNbWxkN7Ifi9uKEY0NRKAmBnEYkD0uf",
+              "client_secret": client_secret,
           }
       }]
+
 
       req = requests.get(OIDC_ISSUER)
       key_der_base64 = req.json()["public_key"]
@@ -127,7 +131,6 @@ web:
           """Delete access token before logging out."""
           return super().logout()
 
-          #class CustomSecurityManager(AirflowSecurityManager):
       class CustomSecurityManager(FabAirflowSecurityManagerOverride):
         authoauthview = CustomAuthRemoteUserView
 
@@ -135,10 +138,6 @@ web:
           if provider == "keycloak":
             token = response["access_token"]
             me = jwt.decode(token, public_key, algorithms=['HS256', 'RS256'], audience=CLIENT_ID)
-            # sample of resource_access
-            # {
-            #   "resource_access": { "airflow": { "roles": ["airflow_admin"] }}
-            # }
             log.info(me)
             groups = me["resource_access"]["airflow"]["roles"] # unsafe
             if len(groups) < 1:
@@ -156,5 +155,5 @@ web:
             return userinfo
           else:
             return {}
-      SECURITY_MANAGER_CLASS = CustomSecurityManager
 
+      SECURITY_MANAGER_CLASS = CustomSecurityManager
