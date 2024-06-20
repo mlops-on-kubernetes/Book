@@ -59,22 +59,6 @@ ingress:
   flower:
     enabled: false
 
-#scheduler:
-  #extraInitContainers:
-  #  - name: fix-permissions
-  #    image: busybox
-  #    command:
-  #    - sh
-  #    - -c
-  #    - |
-  #      chown -R 1000:100 /mnt/shared-dir
-  #    securityContext:
-  #      runAsUser: 0
-  #    volumeMounts:
-  #    - name: airflow-shared
-  #      mountPath: /mnt/shared-dir
-
-
 webserver:
   webserverConfig: | 
       import jwt

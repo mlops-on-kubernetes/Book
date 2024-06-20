@@ -2,11 +2,12 @@ airflowVersion: "2.9.1"
 webserverSecretKey: secretAirflowWebserverSecretKey
 executor: "KubernetesExecutor"
 uid: 1000
+gid: 100
 
 volumes:
   - name: airflow-shared
     persistentVolumeClaim:
-      claimName: airflow-efs-claim
+      claimName: airflow-efs-shared
 
 volumeMounts:
   - name: airflow-shared
@@ -20,10 +21,15 @@ airflow:
   config:
     AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: 10
     AIRFLOW__LOGGING__BASE_LOG_FOLDER: /var/log/airflow
+    AIRFLOW__LOGGING__DAG_PROCESSOR_MANAGER_LOG_LOCATION: /var/log/airflow/dag_processor_manager/dag_processor_manager.log
+    AIRFLOW__SCHEDULER__CHILD_PROCESS_LOG_DIRECTORY: /var/log/airflow/scheduler
 
 config:
+  core:
+    min_serialized_dag_fetch_interval: 1
   logging:
     base_log_folder: /var/log/airflow
+    child_process_log_directory: /var/log/airflow/scheduler
   webserver:
     base_url: "https://platform.${DOMAIN}/airflow"
 
@@ -139,7 +145,7 @@ webserver:
             token = response["access_token"]
             me = jwt.decode(token, public_key, algorithms=['HS256', 'RS256'], audience=CLIENT_ID)
             log.info(me)
-            groups = me["resource_access"]["airflow"]["roles"] # unsafe
+            groups = me["resource_access"]["airflow"]["roles"] 
             if len(groups) < 1:
                 groups = ["airflow_public"]
             else:
