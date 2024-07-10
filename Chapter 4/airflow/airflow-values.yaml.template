@@ -1,4 +1,4 @@
-airflowVersion: "2.9.1"
+defaultAirflowTag: "2.9.2-python3.11"
 webserverSecretKey: secretAirflowWebserverSecretKey
 executor: "KubernetesExecutor"
 uid: 1000

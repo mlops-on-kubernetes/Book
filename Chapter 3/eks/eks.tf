@@ -47,13 +47,25 @@ module "eks" {
 
   eks_managed_node_groups = {
     static_ng = {
-      instance_types = ["m5.large"]
+      use_custom_launch_template = false
+      launch_template_name       = "" 
+      instance_types             = ["m5.large"]
 
       min_size     = 2
       max_size     = 3
       desired_size = 2
       disk_size    = 50
-
+      
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = 50
+            volume_type           = "gp3"
+            delete_on_termination = true
+          }
+        }
+      }
       labels = {
         # Used to ensure Karpenter runs on nodes that it does not manage
         "karpenter.sh/controller" = "true"
