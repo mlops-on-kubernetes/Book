@@ -1,0 +1,26 @@
+apiVersion: kubeflow.org/v1
+kind: TFJob
+metadata:
+  name: multi-worker
+spec:
+  runPolicy:
+    cleanPodPolicy: Running
+  tfReplicaSpecs:
+    Worker:
+      replicas: 2
+      restartPolicy: Never
+      template:
+        spec:
+          containers:
+            - name: tensorflow
+              image: 096198301477.dkr.ecr.us-west-2.amazonaws.com/kubeflow-tfjob:efa-v4
+              volumeMounts:
+                - mountPath: /train
+                  name: training
+              resources:
+                limits:
+                  nvidia.com/gpu: 1
+          volumes:
+            - name: training
+              persistentVolumeClaim:
+                claimName: kubelow-efs-shared
