@@ -1,0 +1,11 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: machine-learning
+  region: us-west-2
+
+managedNodeGroups:
+  - name: gpu-workers
+    instanceType: g4dn.xlarge
+

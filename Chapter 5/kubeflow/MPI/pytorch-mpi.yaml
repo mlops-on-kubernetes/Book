@@ -1,0 +1,28 @@
+apiVersion: kubeflow.org/v1
+kind: MPIJob
+metadata:
+  name: pytorch-mnist-ddp-gpu
+spec:
+  slotsPerWorker: 1
+  mpiReplicaSpecs:
+    Launcher:
+      replicas: 1
+      template:
+        spec:
+          containers:
+            - image: gcr.io/kubeflow-examples/pytorch-mnist/traingpu
+              name: mpi-launcher
+              resources:
+                limits:
+                  nvidia.com/gpu: 1
+    Worker:
+      replicas: 2
+      template:
+        spec:
+          containers:
+            - image: gcr.io/kubeflow-examples/pytorch-mnist/traingpu
+              name: mpi-worker
+              resources:
+                limits:
+                  nvidia.com/gpu: 1
+
