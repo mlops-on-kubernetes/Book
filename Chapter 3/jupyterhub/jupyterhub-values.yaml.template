@@ -89,7 +89,7 @@ singleuser:
     NOTEBOOK_ARGS: "--allow-root"
     CHOWN_HOME: "yes"
     CHOWN_HOME_OPTS: "-R"
-    CHOWN_EXTRA: "/home/shared/"
+    # CHOWN_EXTRA: "/home/shared/"
   uid: 0
   fsGid: 0
   cmd: null
