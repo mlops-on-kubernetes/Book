@@ -1,0 +1,43 @@
+apiVersion: ray.io/v1
+kind: RayCluster
+metadata:
+  name: persistent-raycluster
+  namespace: ray
+spec:
+  rayVersion: '2.34.0'
+  headGroupSpec:
+    rayStartParams: {}
+    template:
+      spec:
+        containers:
+          - name: ray-head
+            imagePullPolicy: Always
+            image: rayproject/ray:2.34.0-py311-cpu
+            resources:
+              limits:
+                cpu: "8"
+                memory: "32G"
+              requests:
+                cpu: "8"
+                memory: "32G"
+  workerGroupSpecs:
+    - groupName: workergroup
+      maxReplicas: 3
+      minReplicas: 1
+      numOfHosts: 0
+      replicas: 2
+      rayStartParams: {}
+      template:
+        spec:
+          containers:
+            - image: rayproject/ray:2.34.0-py311-cpu
+              name: ray-worker
+              resources:
+                limits:
+                  cpu: "8"
+                  memory: "32G"
+                  #nvidia.com/gpu: 1
+                requests:
+                  cpu: "8"
+                  memory: "32G"
+                  #nvidia.com/gpu: 1
