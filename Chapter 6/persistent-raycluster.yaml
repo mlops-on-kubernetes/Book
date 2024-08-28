@@ -5,6 +5,10 @@ metadata:
   namespace: ray
 spec:
   rayVersion: '2.34.0'
+  enableInTreeAutoscaling: true
+  autoscalerOptions:
+    upscalingMode: Conservative
+    idleTimeoutSeconds: 120
   headGroupSpec:
     rayStartParams: {}
     template:

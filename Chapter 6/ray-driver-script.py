@@ -1,20 +1,17 @@
 from ray.job_submission import JobSubmissionClient
 from os import environ
-#ray_address = environ['RAY_ADDRESS']
-#client = JobSubmissionClient("http://"+ray_address+":8265")
+
 client = JobSubmissionClient()
 
 run_torch = (
-    "git clone https://github.com/ray-project/ray || true; "
-    "python ray/release/air_tests/air_benchmarks/workloads/torch_benchmark.py"
-    " --num-workers 2"
+    "python pytorch-sample.py"
 )
-
 
 submission_id = client.submit_job(
     entrypoint = run_torch,
     runtime_env = {
         "pip": ["torch", "torchvision"],
+        "working_dir": "./",
     }
 )
 
