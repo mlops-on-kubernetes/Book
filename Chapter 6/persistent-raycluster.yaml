@@ -29,7 +29,6 @@ spec:
       maxReplicas: 3
       minReplicas: 1
       numOfHosts: 0
-      replicas: 2
       rayStartParams: {}
       template:
         spec:

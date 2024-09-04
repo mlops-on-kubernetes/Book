@@ -123,7 +123,7 @@ def train_func_per_worker(config: Dict):
         ray.train.report(metrics={"loss": test_loss, "accuracy": accuracy})
 
 
-def train_fashion_mnist(num_workers=3, use_gpu=False):
+def train_fashion_mnist(num_workers=5, use_gpu=False):
     global_batch_size = 32
 
     train_config = {

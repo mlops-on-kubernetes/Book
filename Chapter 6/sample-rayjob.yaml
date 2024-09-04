@@ -1,0 +1,68 @@
+apiVersion: ray.io/v1
+kind: RayJob
+metadata:
+  name: rayjob-crd-sample
+  namespace: ray
+spec:
+  entrypoint: python /opt/script/pytorch-sample.py
+  shutdownAfterJobFinishes: true
+  ttlSecondsAfterFinished: 600
+  runtimeEnvYAML: |
+    pip:
+      - torch==2.4.0
+      - torchvision==0.19.0
+    env_vars: {}
+  rayClusterSpec:
+    enableInTreeAutoscaling: true
+    autoscalerOptions:
+      upscalingMode: Conservative
+      idleTimeoutSeconds: 300
+    rayVersion: '2.34.0'
+    headGroupSpec:
+      rayStartParams: {}
+      template:
+        spec:
+          containers:
+          - name: ray-head
+            image: rayproject/ray:2.34.0
+            resources:
+              limits:
+                cpu: "8"
+                memory: "32G"
+              requests:
+                cpu: "8"
+                memory: "32G"
+            # For enabling profiling (https://docs.ray.io/en/latest/cluster/kubernetes/k8s-ecosystem/pyspy.html)
+            securityContext:
+              capabilities:
+                add:
+                - SYS_PTRACE
+            volumeMounts:
+            - mountPath: /opt/script
+              name: training-script
+          volumes:
+          - name: training-script
+            configMap:
+              name: ray-job-code
+              items:
+              - key: pytorch-sample.py
+                path: pytorch-sample.py
+    workerGroupSpecs:
+      - groupName: workergroup
+        maxReplicas: 3
+        minReplicas: 1
+        numOfHosts: 0
+        rayStartParams: {}
+        template:
+          spec:
+            containers:
+              - image: rayproject/ray:2.34.0
+                name: ray-worker
+                resources:
+                  limits:
+                    cpu: "8"
+                    memory: "32G"
+                  requests:
+                    cpu: "8"
+                    memory: "32G"
+
