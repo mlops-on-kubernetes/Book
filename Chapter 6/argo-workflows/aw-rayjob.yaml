@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: ray-job-workflow-
+  namespace: ray
+spec:
+  entrypoint: ray-job-template
+  serviceAccountName: argo-workflow
+  templates:
+  - name: ray-job-template
+    resource:
+      action: create
+      manifest: |
+        apiVersion: ray.io/v1alpha1
+        kind: RayJob
+        metadata:
+          generateName: ray-job-
+          namespace: ray
+        spec:
+          entrypoint: python /home/ray/pytorch-sample-configmap.py
+          shutdownAfterJobFinishes: true
+          rayClusterSpec:
+            rayVersion: '2.3.0'
+            headGroupSpec:
+              serviceType: ClusterIP
+              rayStartParams:
+                dashboard-host: '0.0.0.0'
+                num-cpus: '1'
+              template:
+                spec:
+                  containers:
+                  - name: ray-head
+                    image: rayproject/ray:2.3.0
+                    volumeMounts:
+                    - name: script-volume
+                      mountPath: /home/ray
+                  volumes:
+                  - name: script-volume
+                    configMap:
+                      name: ray-python-script
+            workerGroupSpecs:
+            - replicas: 1
+              template:
+                spec:
+                  containers:
+                  - name: ray-worker
+                    image: rayproject/ray:2.3.0
+                    volumeMounts:
+                    - name: script-volume
+                      mountPath: /home/ray
+                  volumes:
+                  - name: script-volume
+                    configMap:
+                      name: ray-python-script

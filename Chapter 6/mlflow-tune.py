@@ -119,4 +119,4 @@ if __name__ == "__main__":
         )
     else:
         # num_epochs is set to 2 to shorten the experiment duration
-        tune_mnist(num_samples=30, num_epochs=2, gpus_per_trial=0, tracking_uri=mlflow_tracking_uri)
+        tune_mnist(num_samples=10, num_epochs=2, gpus_per_trial=0, tracking_uri=mlflow_tracking_uri)

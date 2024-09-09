@@ -1,0 +1,51 @@
+crds:
+  install: false
+
+server:
+  secure: false
+  authModes:
+    - sso
+  sso:
+    enabled: true
+    issuer: https://auth.mlopsbook.online/realms/master
+    redirectUrl: https://platform.mlopsbook.online/argo/oauth2/callback
+    scopes:
+      - openid
+      - profile
+      - email
+      - groups
+    clientId:
+      name: argo-server-sso
+      key: client-id
+    clientSecret:
+      name: argo-server-sso
+      key: client-secret
+    rbac:
+      enabled: false
+  baseHref: /argo/
+  ingress:
+    enabled: true
+    hosts:
+      - platform.mlopsbook.online
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+    pathType: ImplementationSpecific
+    paths:
+      - /argo(/|$)(.*)
+  extraArgs:
+    - --auth-mode=client
+    - --auth-mode=sso
+
+workflow:
+  serviceAccount:
+    create: true
+    name: "argo-workflow"
+  rbac:
+    create: true
+
+controller:
+  workflowNamespaces:
+    - default
+    - ray
+    - argo

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argo-server-sso
+  namespace: argo
+data:
+  client-secret: NGc5aUtMb3RkdWRRVGZsVGl5dXYySFBTSHVWM2s3eHg=
+  client-id: YXJnbw==
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  namespace: argo
+data:
+  url: https://argo.mlopsbook.online
+  oidc.config: |
+    name: Keycloak
+    issuer: https://auth.mlopsbook.online/realms/master
+    clientID: argo
+    clientSecret: $oidc.keycloak.clientSecret
+    requestedScopes: ["openid", "profile", "email", "groups"]
