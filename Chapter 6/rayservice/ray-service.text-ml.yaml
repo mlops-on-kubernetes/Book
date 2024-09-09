@@ -24,13 +24,17 @@ spec:
             ray_actor_options:
               num_cpus: 0.2
             user_config:
-              language: spanish
+              language: french
           - name: Summarizer
             num_replicas: 1
             ray_actor_options:
               num_cpus: 0.2
   rayClusterConfig:
     rayVersion: '2.34.0' # should match the Ray version in the image of the containers
+    enableInTreeAutoscaling: true
+    autoscalerOptions:
+      upscalingMode: Conservative
+      idleTimeoutSeconds: 120
     ######################headGroupSpecs#################################
     # Ray head pod template.
     headGroupSpec:
