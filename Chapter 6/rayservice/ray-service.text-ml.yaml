@@ -20,13 +20,13 @@ spec:
             - transformers
         deployments:
           - name: Translator
-            num_replicas: 1
+            num_replicas: 4
             ray_actor_options:
               num_cpus: 0.2
             user_config:
               language: french
           - name: Summarizer
-            num_replicas: 1
+            num_replicas: 4
             ray_actor_options:
               num_cpus: 0.2
   rayClusterConfig:

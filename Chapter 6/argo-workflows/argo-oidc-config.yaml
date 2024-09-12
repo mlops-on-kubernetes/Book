@@ -4,7 +4,7 @@ metadata:
   name: argo-server-sso
   namespace: argo
 data:
-  client-secret: NGc5aUtMb3RkdWRRVGZsVGl5dXYySFBTSHVWM2s3eHg=
+  client-secret: NGc5aU=
   client-id: YXJnbw==
 
 ---
