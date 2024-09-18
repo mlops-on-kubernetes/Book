@@ -20,8 +20,7 @@ spec:
             - transformers
         deployments:
           - name: Translator
-            min_replicas: 0
-            max_replicas: 2
+            num_replicas: 4
             ray_actor_options:
               num_cpus: 0.2
             user_config:

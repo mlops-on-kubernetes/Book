@@ -1,41 +1,24 @@
-# Make sure to increase resource requests and limits before using this example in production.
-# For examples with more realistic resource configuration, see
-# ray-cluster.complete.large.yaml and
-# ray-cluster.autoscaler.large.yaml.
 apiVersion: ray.io/v1
 kind: RayService
 metadata:
-  name: rs-text-sum
+  name: rayservice-sample
+  namespace: kuberay-system
 spec:
   # serveConfigV2 takes a yaml multi-line scalar, which should be a Ray Serve multi-application config. See https://docs.ray.io/en/latest/serve/multi-app.html.
+  serviceUnhealthySecondThreshold: 900
+  deploymentUnhealthySecondThreshold: 300
   serveConfigV2: |
     applications:
-      - name: text_ml_app
-        import_path: text_ml.app
-        route_prefix: /summarize_translate
+      - name: llm-serving-app
+        import_path: llm-serving:deployment
+        route_prefix: /
         runtime_env:
-          working_dir: "https://github.com/mlops-on-kubernetes/Book/raw/main/Chapter%206/serve-config.zip"
-          pip:
-            - torch
-            - transformers
+          working_dir: FILE:///vllm-workspace/llm-app.zip
         deployments:
-          - name: Translator
-            min_replicas: 0
-            max_replicas: 2
-            ray_actor_options:
-              num_cpus: 0.2
-            user_config:
-              language: french
-          - name: Summarizer
-            num_replicas: 4
-            ray_actor_options:
-              num_cpus: 0.2
+          - name: VLLMPredictDeployment
+            num_replicas: 1
   rayClusterConfig:
-    rayVersion: '2.34.0' # should match the Ray version in the image of the containers
-    enableInTreeAutoscaling: true
-    autoscalerOptions:
-      upscalingMode: Conservative
-      idleTimeoutSeconds: 120
+    rayVersion: '2.11.0' # should match the Ray version in the image of the containers
     ######################headGroupSpecs#################################
     # Ray head pod template.
     headGroupSpec:
@@ -43,20 +26,31 @@ spec:
       # See https://github.com/ray-project/kuberay/blob/master/docs/guidance/rayStartParams.md for the default settings of `rayStartParams` in KubeRay.
       # See https://docs.ray.io/en/latest/cluster/cli.html#ray-start for all available options in `rayStartParams`.
       rayStartParams:
+        resources: '"{\"accelerator_type_cpu\": 4}"'
         dashboard-host: '0.0.0.0'
       #pod template
       template:
         spec:
+          volumes:
+          # mount the model from hostPath
+          - name: model-data
+            hostPath:
+              path: /data/models
+              type: Directory
+          - name: tz-config
+            hostPath:
+              path: /etc/localtime
           containers:
             - name: ray-head
-              image: rayproject/ray:2.34.0
+              image: vllm/vllm-openai:ray-2.11.0-py3.10.12-llm-app
+              #image: rayproject/ray-ml:2.10.0-py310-zip
               resources:
                 limits:
-                  cpu: 2
-                  memory: 4Gi
+                  cpu: 4
+                  memory: 16Gi
                 requests:
                   cpu: 2
-                  memory: 4Gi
+                  memory: 2Gi
               ports:
                 - containerPort: 6379
                   name: gcs-server
@@ -66,31 +60,59 @@ spec:
                   name: client
                 - containerPort: 8000
                   name: serve
+              volumeMounts:
+              - mountPath: /data/models
+                name: model-data
+              - name: tz-config
+                mountPath: /etc/localtime
     workerGroupSpecs:
       # the pod replicas in this group typed worker
       - replicas: 1
-        minReplicas: 1
+        minReplicas: 0
         maxReplicas: 5
         # logical group name, for this called small-group, also can be functional
         groupName: small-group
         # The `rayStartParams` are used to configure the `ray start` command.
         # See https://github.com/ray-project/kuberay/blob/master/docs/guidance/rayStartParams.md for the default settings of `rayStartParams` in KubeRay.
         # See https://docs.ray.io/en/latest/cluster/cli.html#ray-start for all available options in `rayStartParams`.
-        rayStartParams: {}
+        rayStartParams:
+          resources: '"{\"accelerator_type_cpu\": 4, \"accelerator_type_3090\": 1}"'
         #pod template
         template:
           spec:
+            volumes:
+            - name: model-data
+              hostPath:
+                path: /NFS/125_bakup/models
+                type: Directory
+            - name: tz-config
+              hostPath:
+                path: /etc/localtime
+            - name: dshm
+              emptyDir:
+                medium: Memory
+                sizeLimit: "5.24Gi"
             containers:
               - name: ray-worker # must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name',  or '123-abc'
-                image: rayproject/ray:2.34.0
+                #image: rayproject/ray-ml:2.10.0-py310-zip
+                image: vllm/vllm-openai:ray-2.11.0-py3.10.12-llm-app
                 lifecycle:
                   preStop:
                     exec:
                       command: ["/bin/sh","-c","ray stop"]
                 resources:
                   limits:
-                    cpu: "1"
-                    memory: "4Gi"
+                    cpu: "4"
+                    memory: "16Gi"
+                    nvidia.com/gpu: 1
                   requests:
-                    cpu: "500m"
+                    cpu: "2"
                     memory: "2Gi"
+                    nvidia.com/gpu: 1
+                volumeMounts:
+                - mountPath: /data/models
+                  name: model-data
+                - name: tz-config
+                  mountPath: /etc/localtime
+                - mountPath: /dev/shm
+                  name: dshm

@@ -1,0 +1,48 @@
+apiVersion: ray.io/v1
+kind: RayCluster
+metadata:
+  name: persistent-raycluster
+  namespace: ray
+spec:
+  rayVersion: '2.34.0'
+  enableInTreeAutoscaling: true
+  autoscalerOptions:
+    upscalingMode: Conservative
+    idleTimeoutSeconds: 120
+  headGroupSpec:
+    rayStartParams: {}
+    template:
+      spec:
+        containers:
+          - name: ray-head
+            imagePullPolicy: Always
+            image: rayproject/ray:2.34.0-py39-gpu
+            resources:
+              limits:
+                cpu: "8"
+                memory: "32G"
+                nvidia.com/gpu: 2
+              requests:
+                cpu: "8"
+                memory: "32G"
+                nvidia.com/gpu: 2
+  workerGroupSpecs:
+    - groupName: workergroup
+      maxReplicas: 3
+      minReplicas: 1
+      numOfHosts: 0
+      rayStartParams: {}
+      template:
+        spec:
+          containers:
+            - image: rayproject/ray:2.34.0-py39-gpu
+              name: ray-worker
+              resources:
+                limits:
+                  cpu: "8"
+                  memory: "32G"
+                  nvidia.com/gpu: 2
+                requests:
+                  cpu: "8"
+                  memory: "32G"
+                  nvidia.com/gpu: 2

@@ -148,7 +148,7 @@ resource "kubernetes_annotations" "efs-service-account-annotation" {
 
 resource "aws_efs_file_system" "efs-share" {
   creation_token = "ml-share"
-
+  encrypted      = true
   tags = {
     Name = "ml-share"
   }
@@ -160,6 +160,16 @@ resource "aws_efs_access_point" "efs-ap" {
   posix_user {
     gid = 100
     uid = 1000
+  }
+
+  root_directory {
+
+    creation_info {
+      owner_uid   = 1000
+      owner_gid   = 100
+      permissions = "0777"
+    }
+    path = "/shared"
   }
 }
 
