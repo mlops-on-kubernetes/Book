@@ -4,12 +4,9 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from datetime import datetime
+from airflow.utils.dates import days_ago
 from kubernetes.client import models as k8s
 import pandas as pd
-
-
-today = datetime.now().date()
 
 kaggle_secret = Secret(
     deploy_type="volume",
@@ -44,11 +41,10 @@ def _process_data():
 
 with DAG(
     dag_id="med-drug-prep",
-    start_date=datetime(today.year, today.month, today.day),
+    start_date=days_ago(1),
     schedule="@daily",
     catchup=False,
 ):
-
     executor_config = {
         "pod_override": k8s.V1Pod(
             spec=k8s.V1PodSpec(
@@ -87,4 +83,5 @@ with DAG(
         python_callable=_process_data,
         executor_config=executor_config,
     )
+
     download_and_unzip >> process_data
