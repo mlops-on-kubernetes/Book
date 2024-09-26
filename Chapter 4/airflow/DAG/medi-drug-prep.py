@@ -1,13 +1,12 @@
 from airflow import DAG
-from datetime import datetime
+from airflow.kubernetes.secret import Secret
 from airflow.operators.python import PythonOperator
-from kubernetes.client import models as k8s
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from airflow.kubernetes.secret import Secret
+from datetime import datetime
+from kubernetes.client import models as k8s
 import pandas as pd
-import numpy as np
 
 
 today = datetime.now().date()
