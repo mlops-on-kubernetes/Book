@@ -1,5 +1,6 @@
 *.crt
 *.key
+.idea
 **/.terraform/*
 
 
