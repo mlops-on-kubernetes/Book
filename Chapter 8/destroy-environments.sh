@@ -31,6 +31,7 @@ if [ -z "${TF_VAR_aws_region}" ]; then
 fi
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
+SUB_LEVEL="Chapter 8"
 
 echo "Following environment variables will be used:"
 echo "CLUSTER_REGION = "$TF_VAR_aws_region
@@ -57,13 +58,13 @@ aws elbv2 delete-load-balancer --region $TF_VAR_aws_region --load-balancer-arn $
 #terraform -chdir=bootstrap destroy -auto-approve
 
 # Cleanup the IDP Builder and applications
-${REPO_ROOT}/platform/infra/terraform/mgmt/setups/uninstall.sh
+${REPO_ROOT}/${SUB_LEVEL}/setups/uninstall.sh
 
 # Cleanup the keycloak Secret config if not cleaned
 aws secretsmanager delete-secret --secret-id "modern-engg/keycloak/config" --force-delete-without-recovery --region $TF_VAR_aws_region || true
 
 # Cleanup the IDP EKS management cluster and prerequisites
-${REPO_ROOT}/platform/infra/terraform/mgmt/terraform/mgmt-cluster/uninstall.sh
+${REPO_ROOT}/${SUB_LEVEL}/terraform/mgmt-cluster/uninstall.sh
 
 rm -rf ${REPO_ROOT}/platform/infra/terraform/.git || true
 

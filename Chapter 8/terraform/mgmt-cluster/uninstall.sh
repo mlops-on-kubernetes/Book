@@ -2,6 +2,7 @@
 set -e -o pipefail
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
+SUB_LEVEL="Chapter 8"
 #source ${REPO_ROOT}/setups/utils.sh
 
 echo -e "${PURPLE}\nTargets:${NC}"
@@ -16,13 +17,13 @@ if [[ ! "$response" =~ ^[Yy][Ee][Ss]$ ]]; then
   exit 0
 fi
 
-SETUP_DIR="${REPO_ROOT}/setups"
+SETUP_DIR="${REPO_ROOT}/${SUB_LEVEL}/setups"
 
 cd "${SETUP_DIR}/argocd/"
 ./uninstall.sh
 cd -
 
-cd "${REPO_ROOT}/terraform/mgmt-cluster"
+cd "${REPO_ROOT}/${SUB_LEVEL}/terraform/mgmt-cluster"
 
 kubectl delete -f ./karpenter.yaml || true
 
