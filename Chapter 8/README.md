@@ -62,6 +62,8 @@ Components are installed as ArgoCD Applications. You can monitor installation pr
 ```bash
 # Get the admin password 
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+kubectl port-forward svc/argocd-server -n argocd 8081:80
 ```
 
 Go to [`http://localhost:8081`](http://localhost:8081) and login with the username `admin` and password obtained above. In the UI you can look at resources created, their logs, and events.
