@@ -25,4 +25,4 @@ terraform destroy
 
 #cd "${SETUP_DIR}/argocd/"
 #./uninstall.sh
-#cd -
+
