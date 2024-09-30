@@ -23,6 +23,6 @@ fi
 cd "${TF_DIR}"
 terraform destroy
 
-#cd "${SETUP_DIR}/argocd/"
+
 
 
