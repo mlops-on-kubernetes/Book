@@ -38,7 +38,7 @@ resource "kubectl_manifest" "application_argocd_crossplane" {
   }
 }
 
-resource "kubectl_manifest" "application_crossplane_irsa_drc" {
+resource "kubectl_manifest" "application_argocd_crossplane_irsa_drc" {
   depends_on = [
     kubectl_manifest.application_argocd_crossplane,
   ]
@@ -50,7 +50,7 @@ resource "kubectl_manifest" "application_crossplane_irsa_drc" {
 
 resource "kubectl_manifest" "application_argocd_crossplane_provider" {
   depends_on = [
-    kubectl_manifest.application_crossplane_irsa_drc,
+    kubectl_manifest.application_argocd_crossplane_irsa_drc,
   ]
   yaml_body = templatefile("${path.module}/templates/argocd-apps/crossplane-provider.yaml", {
     GITHUB_URL = local.repo_url,
