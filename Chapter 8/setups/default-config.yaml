@@ -8,7 +8,7 @@ tags:
 region: "us-west-2"
 # The name of the EKS cluster you are installing this under.
 cluster_name: "modern-engineering"
-# Set this to false if you want to manage DNS somewhere else. e.g. manually.
+
 #enable_dns_management: true
 # If using external DNS, specify the Route53 hosted zone ID. Required if enable_dns_management is set to true
 #hosted_zone_id: Z03804463VDEET6154SUK
