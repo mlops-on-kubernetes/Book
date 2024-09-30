@@ -2,6 +2,7 @@
 set -e -o pipefail
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
+SUB_LEVEL="Chapter 8"
 
 #if [ -f "${REPO_ROOT}/private/github-token" ]; then
 #  GITHUB_TOKEN=$(cat ${REPO_ROOT}/private/github-token | tr -d '\n')
@@ -27,7 +28,8 @@ kubectl create ns argocd || true
 #envsubst < github-secret.yaml  | kubectl apply -f -
 
 echo 'creating Argo CD resources'
-cd ${REPO_ROOT}
+cd "${REPO_ROOT}/${SUB_LEVEL}"
+SUB_LEVEL="Chapter 8"
 retry_count=0
 max_retries=2
 

@@ -22,7 +22,7 @@ kubectl apply -f ./karpenter.yaml
 export GITHUB_URL=$(yq '.repo_url' "${REPO_ROOT}/${SUB_LEVEL}/setups/config.yaml")
 
 # Set up ArgoCD. We will use ArgoCD to install all components.
-cd "${REPO_ROOT}/setups/argocd/"
+cd "${REPO_ROOT}/${SUB_LEVEL}/setups/argocd/"
 ./install.sh
 cd -
 
