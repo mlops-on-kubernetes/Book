@@ -2,9 +2,6 @@
 ![overview](docs/images/overview.jpg)
 
 
-> **_NOTE:_**  Applications deployed in this repository are not meant or configured for production.
-
-
 # Installation
 
 - Installation script must be used with a EKS cluster because we use IRSA to talk to AWS services.
