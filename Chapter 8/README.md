@@ -56,11 +56,6 @@ Follow the following steps to get started.
 
 1. Create a new EKS cluster using our terraform scripts:
     ```./terraform/mgmt-cluster/install.sh```
-2. Once installation completes, navigate to `backstage.<DOMAIN_NAME>` and log in as `user1`. Password is available as a secret. You may need to wait for DNS propagation to complete to be able to login. May take ~10 minutes.
-    ```bash
-    kubectl get secrets -n keycloak keycloak-user-config -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
-    ```
-
 
 ### Monitoring installation progress
 
@@ -92,7 +87,6 @@ The following components are installed if you chose the full installation option
 | ingress-nginx | v1.8.0  |
 | keycloak | v22.0.0 |
 | external-secrets | v0.9.2  |
-
 
 ## How to access the Components of the Platform?
 
