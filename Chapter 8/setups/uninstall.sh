@@ -23,5 +23,3 @@ fi
 cd "${TF_DIR}"
 terraform destroy
 
-
-
