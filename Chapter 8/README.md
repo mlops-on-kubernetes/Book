@@ -109,7 +109,8 @@ k get secrets -n keycloak keycloak-user-config -o go-template='{{range $k,$v := 
 
 #### ArgoCD
 
-Click on the ArgoCD URL to navigate to your browser to access the ArgoCD App.
+Click on the ArgoCD URL to navigate to your browser to access the ArgoCD App. User is `Admin` and the password is available in the `argocd` namespace.
+
 
 ## Uninstall
 1. Run `setups/uninstall.sh` and follow the prompts.
