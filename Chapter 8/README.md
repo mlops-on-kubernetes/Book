@@ -48,13 +48,15 @@ This installation pattern where some Kubernetes manifests are handled in Terrafo
 - curl
 - kustomize
 
-
 ## Install
 
 Follow the following steps to get started.
 
-1. Create a new EKS cluster using our terraform scripts:
-    ```./terraform/mgmt-cluster/install.sh```
+1. Run the following commands to setup your IDP environment:
+```bash
+cd ./Chapter 8
+./setup-environments.sh
+```
 
 ### Monitoring installation progress
 

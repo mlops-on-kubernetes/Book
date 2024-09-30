@@ -4,7 +4,6 @@ set -e -o pipefail
 REPO_ROOT=$(git rev-parse --show-toplevel)
 SETUP_DIR="${REPO_ROOT}/setups"
 TF_DIR="${REPO_ROOT}/terraform"
-source ${REPO_ROOT}/setups/utils.sh
 
 cd ${SETUP_DIR}
 
