@@ -32,7 +32,7 @@ SUB_LEVEL="Chapter 8"
 export DNS_HOSTNAME=$(kubectl get service  ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 
 # Replace dns with the value of DNS_HOSTNAME
-sed -e "s/INGRESS_DNS/${DNS_HOSTNAME}/g" ${REPO_ROOT}/${SUB_LEVEL}/setups/default-config.yaml > ${REPO_ROOT}/${SUB_LEVEL}/setups/config.yaml
+sed -e "s/INGRESS_DNS/${DNS_HOSTNAME}/g" "${REPO_ROOT}/${SUB_LEVEL}/setups/default-config.yaml" > "${REPO_ROOT}/${SUB_LEVEL}/setups/config.yaml"
 
 # Deploy the apps
 
