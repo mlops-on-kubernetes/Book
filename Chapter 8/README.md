@@ -98,8 +98,6 @@ The following components are installed if you chose the full installation option
 
 Once the setup is complete, use the URLs from the output to login to backstage, ArgoCD, Argo, KeyCloak, Argo Workflows and Gitea.
 
-
-
 #### ArgoCD
 
 Click on the ArgoCD URL to navigate to your browser to access the ArgoCD App. User is `Admin` and the password is available in the `argocd` namespace.
@@ -127,14 +125,18 @@ k get secrets -n keycloak keycloak-user-config -o go-template='{{range $k,$v := 
 
 ### Gitea:
 
-Click on the Gitea URL to navigate to your browser to access the Gitea App.  Username of the user is `GiteaAdmin` and Password of the user is `mysecretgiteapassword!`.
-
-### Backstage:
-
-Click on the Backstage URL to navigate to your browser to access the Backstage App.  Two users are created during the installation process: `user1` and `user2`. Their passwords are available in the keycloak namespace.
+Click on the Gitea URL to navigate to your browser to access the Gitea App.  Pleae use the below command to obtain the username and password of Gitea user.
 
 ```bash
-k get secrets -n keycloak keycloak-user-config -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
+k get secrets -n gitea gitea-credential -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
+````
+
+### KeyCloak:
+
+Click on the KeyCloak URL to navigate to your browser to access the Backstage App.  `modernengg-admin` is the user and their passwords are available in the keycloak namespace under the data `KEYCLOAK_ADMIN_PASSWORD`.
+
+```bash
+k get secrets -n keycloak keycloak-config -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
 ```
 
 ## Uninstall
