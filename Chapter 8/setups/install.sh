@@ -17,7 +17,6 @@ echo "AWS account number: $(aws sts get-caller-identity --query "Account" --outp
 export GITHUB_URL=$(yq '.repo_url' ${REPO_ROOT}/${SUB_LEVEL}/setups/config.yaml)
 
 
-
 # The rest of the steps are defined as a Terraform module. Parse the config to JSON and use it as the Terraform variable file. This is done because JSON doesn't allow you to easily place comments.
 cd "${REPO_ROOT}/${SUB_LEVEL}/terraform/"
 yq -o json '.'  ${REPO_ROOT}/${SUB_LEVEL}/setups/config.yaml > terraform.tfvars.json
