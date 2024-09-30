@@ -101,7 +101,7 @@ The following components are installed if you chose the full installation option
 Once the setup is complete, use the URLs from the output to login to backstage, ArgoCD, Argo, KeyCloak, Argo Workflows and Gitea.
 ### Backstage: 
 
-Click on the Backstage URL.  Two users are created during the installation process: `user1` and `user2`. Their passwords are available in the keycloak namespace.
+Click on the Backstage URL to navigate to your browser to access the Backstage App.  Two users are created during the installation process: `user1` and `user2`. Their passwords are available in the keycloak namespace.
 
 ```bash
 k get secrets -n keycloak keycloak-user-config -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
