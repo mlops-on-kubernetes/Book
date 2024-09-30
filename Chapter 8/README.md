@@ -69,8 +69,6 @@ Components are installed as ArgoCD Applications. You can monitor installation pr
 ```bash
 # Get the admin password 
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-
--
 ```
 
 Go to [`http://localhost:8081`](http://localhost:8081) and login with the username `admin` and password obtained above. In the UI you can look at resources created, their logs, and events.
@@ -99,7 +97,27 @@ The following components are installed if you chose the full installation option
 ## How to access the Components of the Platform?
 
 Once the setup is complete, use the URLs from the output to login to backstage, ArgoCD, Argo, KeyCloak, Argo Workflows and Gitea.
-### Backstage: 
+
+
+
+#### ArgoCD
+
+Click on the ArgoCD URL to navigate to your browser to access the ArgoCD App. User is `Admin` and the password is available in the `argocd` namespace.
+
+```bash
+# Get the admin password 
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+### Argo Workflows:
+
+Click on the Argo Workflows URL to navigate to your browser to access the Argo Workflows App.  Two users are created during the installation process: `user1` and `user2`. Their passwords are available in the keycloak namespace.
+
+```bash
+k get secrets -n keycloak keycloak-user-config -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
+```
+
+### Backstage:
 
 Click on the Backstage URL to navigate to your browser to access the Backstage App.  Two users are created during the installation process: `user1` and `user2`. Their passwords are available in the keycloak namespace.
 
@@ -107,10 +125,17 @@ Click on the Backstage URL to navigate to your browser to access the Backstage A
 k get secrets -n keycloak keycloak-user-config -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
 ```
 
-#### ArgoCD
+### Gitea:
 
-Click on the ArgoCD URL to navigate to your browser to access the ArgoCD App. User is `Admin` and the password is available in the `argocd` namespace.
+Click on the Gitea URL to navigate to your browser to access the Gitea App.  Username of the user is `GiteaAdmin` and Password of the user is `mysecretgiteapassword!`.
 
+### Backstage:
+
+Click on the Backstage URL to navigate to your browser to access the Backstage App.  Two users are created during the installation process: `user1` and `user2`. Their passwords are available in the keycloak namespace.
+
+```bash
+k get secrets -n keycloak keycloak-user-config -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
+```
 
 ## Uninstall
 1. Run `setups/uninstall.sh` and follow the prompts.
