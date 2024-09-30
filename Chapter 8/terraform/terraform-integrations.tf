@@ -8,7 +8,7 @@ resource "kubectl_manifest" "flux_manifest" {
   yaml_body = data.http.flux_manifestfile[0].response_body
 }
 
-module "tofu_aws_role" {
+module "tofu_aws_iam_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.14"
 
