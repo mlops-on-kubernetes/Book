@@ -81,17 +81,17 @@ Go to [`http://localhost:8081`](http://localhost:8081) and login with the userna
 The following components are installed if you chose the full installation option.
 
 | Name | Version |
-|---|---|
-| argo-workflows | v3.4.8 |
-| argocd | v2.7.6 |
-| aws-load-balancer-controller | v2.5.3 |
+|---|---------|
+| argo-workflows | v3.4.8  |
+| argocd | v2.7.6  |
+| aws-load-balancer-controller | v2.5.3  |
 | backstage | v1.16.0 |
 | cert-manager | v1.12.2 |
-| crossplane | v1.12.2 |
+| crossplane | v1.15.0 |
 | external-dns | v0.13.5 |
-| ingress-nginx | v1.8.0 |
+| ingress-nginx | v1.8.0  |
 | keycloak | v22.0.0 |
-| external-secrets | v0.9.2 |
+| external-secrets | v0.9.2  |
 
 
 ## How to access the Components of the Platform?
