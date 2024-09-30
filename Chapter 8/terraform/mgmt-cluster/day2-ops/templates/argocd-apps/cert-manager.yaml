@@ -16,7 +16,7 @@ spec:
       helm:
         releaseName: cert-manager
         valueFiles:
-          - "$values/Chapter 8/packages/cert-manager/dev/values.yaml
+          - "$values/Chapter 8/packages/cert-manager/dev/values.yaml"
     - repoURL: ${REPO_URL}
       targetRevision: HEAD
       ref: values
