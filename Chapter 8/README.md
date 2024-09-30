@@ -81,7 +81,7 @@ The following components are installed if you chose the full installation option
 | aws-load-balancer-controller | v2.5.3  |
 | backstage | v1.16.0 |
 | cert-manager | v1.12.2 |
-| crossplane | v1.15.0 |
+| crossplane | v1.15.1 |
 | external-dns | v0.13.5 |
 | ingress-nginx | v1.8.0  |
 | keycloak | v22.0.0 |
