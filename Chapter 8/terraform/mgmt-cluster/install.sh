@@ -3,7 +3,6 @@ set -e -o pipefail
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 SUB_LEVEL="Chapter 8"
-# source ${REPO_ROOT}/setups/utils.sh
 
 echo -e "${GREEN}Installing with the following options: ${NC}"
 echo -e "${GREEN}----------------------------------------------------${NC}"
