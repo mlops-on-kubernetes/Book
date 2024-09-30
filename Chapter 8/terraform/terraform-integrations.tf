@@ -32,7 +32,7 @@ resource "kubectl_manifest" "application_argocd_tofu_controller" {
     module.tofu_aws_iam_role
   ]
   yaml_body = templatefile("${path.module}/templates/argocd-apps/tofu-controller.yaml", {
-    ROLE_ARN = module.tofu_aws_role.iam_role_arn
+    ROLE_ARN = module.tofu_aws_iam_role.iam_role_arn
   }
   )
 }
