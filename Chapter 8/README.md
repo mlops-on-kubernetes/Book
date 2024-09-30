@@ -128,7 +128,7 @@ k get secrets -n gitea gitea-credential -o go-template='{{range $k,$v := .data}}
 
 ### KeyCloak:
 
-Click on the KeyCloak URL to navigate to your browser to access the Backstage App.  `modernengg-admin` is the user and their passwords are available in the keycloak namespace under the data `KEYCLOAK_ADMIN_PASSWORD`.
+Click on the KeyCloak URL to navigate to your browser to access the Backstage App.  `cnoe-admin` is the user and their passwords are available in the keycloak namespace under the data `KEYCLOAK_ADMIN_PASSWORD`.
 
 ```bash
 k get secrets -n keycloak keycloak-config -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'

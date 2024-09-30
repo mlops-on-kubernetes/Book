@@ -110,7 +110,7 @@ resource "kubectl_manifest" "application_argocd_backstage" {
   ]
 
   yaml_body = templatefile("${path.module}/templates/argocd-apps/backstage.yaml", {
-      GITHUB_URL = "https://github.com/elamaran11/cnoe-appmod-implementation.git"
+      GITHUB_URL = local.repo_url
     }
   )
 }
