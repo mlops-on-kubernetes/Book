@@ -16,9 +16,9 @@ spec:
       helm:
         releaseName: ingress-nginx
         valueFiles:
-          - $values/packages/ingress-nginx/dev/values.yaml
+          - "$values/Chapter 8/packages/ingress-nginx/dev/values.yaml"
     - repoURL: ${GITHUB_URL}
-      targetRevision: feature/upgradeToPathBasedRouting
+      targetRevision: main
       ref: values
   destination:
     server: "https://kubernetes.default.svc"

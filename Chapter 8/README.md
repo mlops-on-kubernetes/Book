@@ -54,7 +54,7 @@ Follow the following steps to get started.
 
 1. Run the following commands to setup your IDP environment:
 ```bash
-cd ./Chapter 8
+cd "./Chapter 8"
 ./setup-environments.sh
 ```
 

@@ -6,7 +6,7 @@ SUB_LEVEL="Chapter 8"
 SETUP_DIR="${REPO_ROOT}/${SUB_LEVEL}/setups"
 TF_DIR="${REPO_ROOT}/${SUB_LEVEL}/terraform"
 
-cd ${SETUP_DIR}
+cd "${SETUP_DIR}"
 
 echo -e "${PURPLE}\nTargets:${NC}"
 echo "Kubernetes cluster: $(kubectl config current-context)"

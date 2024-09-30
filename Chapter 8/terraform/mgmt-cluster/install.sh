@@ -19,7 +19,7 @@ aws eks --region us-west-2 update-kubeconfig --name modern-engineering
 
 kubectl apply -f ./karpenter.yaml
 
-export GITHUB_URL=$(yq '.repo_url' ${REPO_ROOT}/${SUB_LEVEL}/setups/config.yaml)
+export GITHUB_URL=$(yq '.repo_url' "${REPO_ROOT}/${SUB_LEVEL}/setups/config.yaml")
 
 # Set up ArgoCD. We will use ArgoCD to install all components.
 cd "${REPO_ROOT}/setups/argocd/"

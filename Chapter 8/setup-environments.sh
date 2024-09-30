@@ -26,7 +26,7 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 SUB_LEVEL="Chapter 8"
 
 # Deploy the base cluster with prerequisites like ArgoCD and Ingress-nginx
-${REPO_ROOT}/${SUB_LEVEL}/terraform/mgmt-cluster/install.sh
+"${REPO_ROOT}/${SUB_LEVEL}/terraform/mgmt-cluster/install.sh"
 
 # Set the DNS_HOSTNAME to be checked
 export DNS_HOSTNAME=$(kubectl get service  ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
@@ -36,7 +36,7 @@ sed -e "s/INGRESS_DNS/${DNS_HOSTNAME}/g" ${REPO_ROOT}/${SUB_LEVEL}/setups/defaul
 
 # Deploy the apps
 
-${REPO_ROOT}/${SUB_LEVEL}/setups/install.sh
+"${REPO_ROOT}/${SUB_LEVEL}/setups/install.sh"
 
 echo "ArgoCD URL is: https://$DNS_HOSTNAME/argocd"
 
