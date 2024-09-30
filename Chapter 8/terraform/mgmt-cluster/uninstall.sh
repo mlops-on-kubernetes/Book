@@ -3,7 +3,6 @@ set -e -o pipefail
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 SUB_LEVEL="Chapter 8"
-#source ${REPO_ROOT}/setups/utils.sh
 
 echo -e "${PURPLE}\nTargets:${NC}"
 echo "Kubernetes cluster: $(kubectl config current-context)"
