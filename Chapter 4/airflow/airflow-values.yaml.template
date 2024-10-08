@@ -99,7 +99,7 @@ webserver:
       
       
       access_token_url = "https://auth.${DOMAIN}/realms/master/protocol/openid-connect/token"
-      api_base_url = "https://auth.mlopsbook.online/realms/master/protocol/openid-connect"
+      api_base_url = "https://auth.${DOMAIN}/realms/master/protocol/openid-connect"
       
       authorize_url = "https://auth.${DOMAIN}/realms/master/protocol/openid-connect/auth"
       client_secret = "iJNbWxkN7Ifi9uKEY0NRKAmBnEYkD0uf"
