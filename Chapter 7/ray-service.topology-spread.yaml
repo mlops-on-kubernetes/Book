@@ -68,8 +68,8 @@ spec:
                   name: serve
     workerGroupSpecs:
       # the pod replicas in this group typed worker
-      - replicas: 2
-        minReplicas: 2
+      - replicas: 3
+        minReplicas: 3
         maxReplicas: 5
         # logical group name, for this called small-group, also can be functional
         groupName: small-group
@@ -79,7 +79,17 @@ spec:
         rayStartParams: {}
         #pod template
         template:
+          metadata:
+            labels:
+              app: model-server
           spec:
+            topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app: model-server
             containers:
               - name: ray-worker # must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name',  or '123-abc'
                 image: rayproject/ray:2.34.0
