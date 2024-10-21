@@ -7,7 +7,7 @@ module "eks" {
   version = "~> 20.10"
 
   cluster_name    = local.name
-  cluster_version = "1.29"
+  cluster_version = "1.31"
 
   # Give the Terraform identity admin access to the cluster
   # which will allow it to deploy resources into the cluster
@@ -258,7 +258,7 @@ resource "kubernetes_persistent_volume" "jupter-efs-pv" {
 
 module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version = "~> 20.9"
+  # version = "~> 20.9"
 
   cluster_name = module.eks.cluster_name
 
@@ -281,7 +281,7 @@ resource "helm_release" "karpenter" {
   #repository_username = data.aws_ecrpublic_authorization_token.token.user_name
   #repository_password = data.aws_ecrpublic_authorization_token.token.password
   chart               = "karpenter"
-  version             = "0.36.2"
+  version             = "1.0.6"
   wait                = false
 
   values = [
