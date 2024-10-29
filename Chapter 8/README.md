@@ -90,7 +90,7 @@ The following components are installed if you chose the full installation option
 
 ## How to access the Components of the Platform?
 
-Once the setup is complete, use the URLs from the output to login to backstage, ArgoCD, Argo, KeyCloak, Argo Workflows and Gitea.
+Once the setup is complete, use the URLs from the output to login to backstage, ArgoCD, Argo, Keycloak, Argo Workflows and Gitea.
 
 #### ArgoCD
 
@@ -125,9 +125,9 @@ Click on the Gitea URL to navigate to your browser to access the Gitea App.  Ple
 k get secrets -n gitea gitea-credential -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
 ````
 
-### KeyCloak:
+### Keycloak:
 
-Click on the KeyCloak URL to navigate to your browser to access the Backstage App.  `cnoe-admin` is the user and their passwords are available in the keycloak namespace under the data `KEYCLOAK_ADMIN_PASSWORD`.
+Click on the Keycloak URL to navigate to your browser to access the Backstage App.  `cnoe-admin` is the user and their passwords are available in the keycloak namespace under the data `KEYCLOAK_ADMIN_PASSWORD`.
 
 ```bash
 k get secrets -n keycloak keycloak-config -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
