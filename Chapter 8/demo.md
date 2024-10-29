@@ -25,7 +25,7 @@ The rest of this document assumes you've used the spark-k8s-operator module to g
 Once the template is hydrated, it is ready to use. You can push it to a private git repository within your organization or push it to a public repository. 
 You can then register the template in the Backstage UI (`Create...` > `Register Existing Component`) or update your Backstage configuration. The main configuration file is a ConfigMap in the backstage namespace with the name `backstage-config`.
 
-You can use the template to create a EKS cluster with optimization for data workload using terraform. The example uses a custom Argo Workflows template to run the install script, add a IAM role to the admin group in the cluster, create a Backstage service account, then registers the cluster to Backstage for use.
+You can use the template to create an EKS cluster with optimizations for data workload using Terraform. The example uses a custom Argo Workflows template to run the install script, add an IAM role to the admin group in the cluster, create a Backstage service account, then registers the cluster to Backstage for use.
 
 The Argo Workflows run is associated with the Backstage entity. So you can check on its status within Backstage. If you'd like to see detailed information about the run, you can click on it to go to the Argo Workflows UI.
 
