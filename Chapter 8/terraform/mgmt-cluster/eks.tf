@@ -7,7 +7,7 @@ module "eks" {
   version = "~> 20.10"
 
   cluster_name    = local.name
-  cluster_version = "1.29"
+  cluster_version = "1.31"
 
   # Give the Terraform identity admin access to the cluster
   # which will allow it to deploy resources into the cluster
@@ -138,7 +138,7 @@ resource "helm_release" "karpenter" {
   name                = "karpenter"
   repository          = "oci://public.ecr.aws/karpenter"
   chart               = "karpenter"
-  version             = "0.36.2"
+  version             = "1.0.6"
   wait                = false
 
   values = [
