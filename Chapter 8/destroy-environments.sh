@@ -66,11 +66,6 @@ aws secretsmanager delete-secret --secret-id "modern-engg/keycloak/config" --for
 # Cleanup the IDP EKS management cluster and prerequisites
 "${REPO_ROOT}/${SUB_LEVEL}/terraform/mgmt-cluster/uninstall.sh"
 
-rm -rf ${REPO_ROOT}/platform/infra/terraform/.git || true
-
 echo "Terraform execution completed"
-
-# Cleanup Folders
-rm -rf terraform-aws-observability-accelerator/
 
 echo "Destroy Complete"
