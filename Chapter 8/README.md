@@ -137,7 +137,7 @@ k get secrets -n keycloak keycloak-config -o go-template='{{range $k,$v := .data
 ## Uninstall
 1. Run `destroy-environments.sh` and follow the prompts.
 
-Note: If you see any failures while delete, please delete the resourecs manually from AWS console.
+Note: If you see any failures while delete, please delete the resources manually from AWS console.
 
 ## Troubleshooting
 
