@@ -1,1 +1,0 @@
-for i in $(seq 1 3); do sudo ./setup-environments.sh && break || sleep 5; done
