@@ -54,6 +54,7 @@ Follow the following steps to get started.
 cd "./Chapter 8"
 ./setup-environments.sh
 ```
+Note: If you see any failures, please rerun the above script.
 
 ### Monitoring installation progress
 
@@ -134,7 +135,9 @@ k get secrets -n keycloak keycloak-config -o go-template='{{range $k,$v := .data
 ```
 
 ## Uninstall
-1. Run `setups/uninstall.sh` and follow the prompts.
+1. Run `destroy-environments.sh` and follow the prompts.
+
+Note: If you see any failures while delete, please delete the resourecs manually from AWS console.
 
 ## Troubleshooting
 
