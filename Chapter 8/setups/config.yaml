@@ -9,7 +9,7 @@ region: "us-west-2"
 # The name of the EKS cluster you are installing this under.
 cluster_name: "modern-engineering"
 
-domain_name: INGRESS_DNS
+domain_name: modern-engg-08950167b28a40be.elb.us-west-2.amazonaws.com
 
 # If set to true, we will store secrets to AWS Secrets Manager, then sync it to the cluster using External Secrets Operator.
 enable_external_secret: true
