@@ -1,0 +1,10 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: ml-cluster
+  region: us-west-2
+  version: '1.30'
+
+autoModeConfig:
+  enabled: true
