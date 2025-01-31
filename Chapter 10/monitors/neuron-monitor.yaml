@@ -98,3 +98,4 @@ spec:
   endpoints:
     - port: neuron-monitor
       interval: 30s
+
