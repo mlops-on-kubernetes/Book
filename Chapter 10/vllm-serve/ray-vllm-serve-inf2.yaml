@@ -1,23 +1,4 @@
 #-------------------------------------------------------------------
-# Deployment instructions
-#-------------------------------------------------------------------
-# pre-requisites
-#-------------------------------------------------------------------
-# Step1: Deploy this blueprint https://awslabs.github.io/data-on-eks/docs/blueprints/ai-ml/trainium
-# Step2: Deploy Neuron Scheduler https://awsdocs-neuron.readthedocs-hosted.com/en/latest/containers/tutorials/k8s-neuron-scheduler.html
-#-------------------------------------------------------------------
-# Step1: cd gen-ai/inference/vllm-rayserve-inf2
-# Step2 (Optional): Build a Docker image and push it to ECR and use the image in the yaml
-# Step3: Deploy Ray Cluster with Meta-Llama-3-8B-Instruct Model on Inf2 instances
-#   kubectl apply -f vllm-rayserve-deployment.yaml
-# Step4: Deploy OpenWebUI Client
-#   kubectl apply -f openai-webui-deployment.yaml
-#   kubectl port-forward service/openai-webui 7860:7860 -n openai-webui
-# Step5: OpenWebUI Client
-#   http://localhost:7860
-#-------------------------------------------------------------------
-
-#-------------------------------------------------------------------
 # Deployment
 #-------------------------------------------------------------------
 ---
