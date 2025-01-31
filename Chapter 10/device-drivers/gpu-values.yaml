@@ -1,0 +1,64 @@
+operator:
+  defaultRuntime: containerd
+
+driver:
+  enabled: false  # Bottlerocket comes with NVIDIA drivers
+
+toolkit:
+  enabled: true
+  env:
+    - name: CONTAINER_RUNTIME
+      value: containerd
+    - name: CONTAINERD_CONFIG
+      value: /etc/containerd/config.toml
+    - name: CONTAINERD_SOCKET
+      value: /run/containerd/containerd.sock
+  securityContext:
+    privileged: true
+    seLinuxOptions:
+      level: "s0"
+    seccompProfile:
+      type: RuntimeDefault
+
+devicePlugin:
+  enabled: true
+  securityContext:
+    privileged: true
+    seLinuxOptions:
+      level: "s0"
+    seccompProfile:
+      type: RuntimeDefault
+
+dcgmExporter:
+  enabled: true
+  securityContext:
+    privileged: true
+    seLinuxOptions:
+      level: "s0"
+    seccompProfile:
+      type: RuntimeDefault
+  arguments:
+    - -f
+    - /etc/dcgm-exporter/dcp-metrics-included.csv
+  serviceMonitor:
+    enabled: true
+    interval: "30s"
+    additionalLabels:
+      release: prometheus
+
+validator:
+  securityContext:
+    privileged: true
+    seLinuxOptions:
+      level: "s0"
+    seccompProfile:
+      type: RuntimeDefault
+
+gfd:
+  enabled: true
+  securityContext:
+    privileged: true
+    seLinuxOptions:
+      level: "s0"
+    seccompProfile:
+      type: RuntimeDefault

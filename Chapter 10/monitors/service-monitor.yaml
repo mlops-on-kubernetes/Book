@@ -12,6 +12,7 @@ spec:
   namespaceSelector:
     matchNames:
       - rayserve-vllm
+      - vllm
   # Only select Kubernetes Services with "matchLabels".
   selector:
     matchLabels:

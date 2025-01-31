@@ -107,7 +107,7 @@ spec:
                 - name: RAY_PROMETHEUS_HOST
                   value: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
           nodeSelector:
-            NodeGroupType: x86-cpu-karpenter
+            NodeGroupType: x86-cpu-karpenter-br
             type: karpenter
           volumes:
             - name: ray-logs

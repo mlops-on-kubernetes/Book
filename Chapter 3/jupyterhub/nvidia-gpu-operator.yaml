@@ -1,5 +1,15 @@
 driver:
   enabled: false
+  repository: nvcr.io/nvidia
+  version: 525.125.06
+  manager:
+    env:
+      - name: ENABLE_AUTO_DRAIN
+        value: "false"
+      - name: ENABLE_NODE_READY
+        value: "false"
+      - name: DRIVER_TYPE
+        value: gpu
 
 mig:
   strategy: mixed
@@ -15,16 +25,31 @@ migManager:
 
 toolkit:
   version: v1.13.1-centos7
+  enabled: true
+  env:
+    - name: NVIDIA_VISIBLE_DEVICE
+      value: all
+    - name: NVIDIA_DRIVER_CAPABILITIES
+      value: all
 
 operator:
   defaultRuntime: containerd
   runtimeClassName: nvidia
-  #tolerations:
-  #- key: "karpenter.sh/controller"
-  #  operator: "Equal"
-  #  value: "true"
-  #  effect: "NoSchedule"
-
 
 gfd:
   version: v0.15.0-ubi8 #v0.8.0
+
+containerRuntime: containerd
+
+dcgm:
+  enabled: true
+
+dcgmExporter:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: kube-system
+    interval: 30s
+    additionalLabels:
+      release: prometheus
+

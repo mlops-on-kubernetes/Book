@@ -1,0 +1,11 @@
+scheduler:
+  enabled: true
+npd:
+  enabled: false
+devicePlugin:
+  tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - key: aws.amazon.com/neuron
+      operator: Exists
+      effect: NoSchedule

@@ -16,7 +16,7 @@ spec:
       helm:
         releaseName: crossplane
         valueFiles:
-          - "$values/Chapter 8/packages/crossplane/dev/values.yaml"
+          - "$values/Chapter 8/packages/crossplane/dev/neuron-values.yaml"
     - repoURL: ${GITHUB_URL}
       targetRevision: HEAD
       ref: values
