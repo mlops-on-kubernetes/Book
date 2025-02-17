@@ -1,6 +1,7 @@
 global:
   storageClass: "gp3"
 
+# Make Keycloak image static
 image:
   digest: sha256:faa80eaca01baa474ef8b03a8797729b98ab6f498329331a179303ddba41da62
 
@@ -16,7 +17,7 @@ postgresql:
   
 ingress:
   enabled: true
-  hostname: auth.mlopsbook.online
+  hostname: auth.prod.mlopsbook.online
   ingressClassName: nginx
   #annotations:
   #  nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
@@ -27,6 +28,6 @@ extraEnvVars:
   - name: KC_HOSTNAME_STRICT_HTTPS
     value: "true"
   - name: KC_HOSTNAME_ADMIN_URL
-    value: "https://auth.mlopsbook.online"
+    value: "https://auth.prod.mlopsbook.online"
   - name: KC_HOSTNAME_URL
-    value: "https://auth.mlopsbook.online" 
+    value: "https://auth.prod.mlopsbook.online" 

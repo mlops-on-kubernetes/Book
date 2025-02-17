@@ -1,0 +1,9 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ray-service-pdb
+spec:
+  minAvailable: 3
+  selector:
+    matchLabels:
+      app: model-server
