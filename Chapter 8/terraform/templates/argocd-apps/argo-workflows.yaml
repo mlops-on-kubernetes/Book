@@ -16,7 +16,7 @@ spec:
       helm:
         releaseName: argo-workflows
         valueFiles:
-          - "$values/Chapter 8/packages/argo-workflows/dev/values.yaml"
+          - "$values/Chapter 8/packages/argo-workflows/dev/neuron-values.yaml"
         parameters:
           - name: server.sso.issuer
             value: ${KEYCLOAK_CNOE_URL}

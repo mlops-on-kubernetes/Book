@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: neuron-monitor
+  namespace: kube-system
+  labels:
+    app: neuron-monitor
+spec:
+  selector:
+    matchLabels:
+      app: neuron-monitor
+  template:
+    metadata:
+      labels:
+        app: neuron-monitor
+    spec:
+      containers:
+        - name: app
+          image: public.ecr.aws/g4h4h0b5/neuron-monitor:1.0.0
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - "neuron-monitor | neuron-monitor-prometheus.py --port 9010"
+          ports:
+            - name: prom-node-exp
+              containerPort: 9010
+              hostPort: 9010
+          volumeMounts:
+            - name: dev
+              mountPath: /dev
+          securityContext:
+            privileged: true
+      tolerations:
+        - key: aws.amazon.com/neuron
+          operator: Exists
+          effect: NoSchedule
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node.kubernetes.io/instance-type
+                    operator: In
+                    values:
+                      - inf1.xlarge
+                      - inf1.2xlarge
+                      - inf1.6xlarge
+                      - inf1.24xlarge
+                      - inf2.xlarge
+                      - inf2.4xlarge
+                      - inf2.8xlarge
+                      - inf2.24xlarge
+                      - inf2.48xlarge
+                      - trn1.2xlarge
+                      - trn1.32xlarge
+                      - trn1n.32xlarge
+      volumes:
+        - name: dev
+          hostPath:
+            path: /dev
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/app-metrics: "true"
+    prometheus.io/port: "9010"
+  name: neuron-monitor
+  namespace: kube-system
+  labels:
+    app: neuron-monitor
+spec:
+  clusterIP: None
+  ports:
+    - name: neuron-monitor
+      port: 9010
+      protocol: TCP
+  selector:
+    app: neuron-monitor
+  type: ClusterIP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: neuron-monitor
+  namespace: monitoring
+  labels:
+    app: neuron-monitor
+spec:
+  namespaceSelector:
+    matchNames:
+      - kube-system
+  selector:
+    matchLabels:
+      app: neuron-monitor
+  endpoints:
+    - port: neuron-monitor
+      interval: 30s
+

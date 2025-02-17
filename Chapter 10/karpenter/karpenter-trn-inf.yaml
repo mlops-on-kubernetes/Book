@@ -1,0 +1,184 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: x86-cpu-karpenter
+spec:
+  amiFamily: AL2
+  amiSelectorTerms:
+    - alias: al2@latest
+  role: "machine-learning"
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 100Gi
+        volumeType: gp3
+    - deviceName: /dev/xvdb
+      ebs:
+        volumeSize: 300Gi
+        volumeType: gp3
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: machine-learning
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: machine-learning
+  tags:
+    karpenter.sh/discovery: machine-learning
+---
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: x86-cpu-karpenter
+spec:
+  template:
+    metadata:
+      labels:
+        type: karpenter
+        NodeGroupType: x86-cpu-karpenter
+    spec:
+      nodeClassRef:
+        name: x86-cpu-karpenter
+      requirements:
+        - key: "karpenter.k8s.aws/instance-family"
+          operator: In
+          values: ["m5"]
+        - key: "karpenter.k8s.aws/instance-size"
+          operator: In
+          values: [ "xlarge", "2xlarge", "4xlarge", "8xlarge"]
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ["on-demand", "spot"]
+  limits:
+    cpu: 1000
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 300s
+    expireAfter: 720h
+  weight: 100
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: trainium-trn1
+spec:
+  amiFamily: AL2
+  amiSelectorTerms:
+    - alias: al2@latest
+  role: "machine-learning"
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        deleteOnTermination: true
+        encrypted: true
+        volumeSize: 500Gi
+        volumeType: gp3
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: machine-learning
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: machine-learning
+  tags:
+    karpenter.sh/discovery: machine-learning
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: trainium-trn1
+spec:
+  template:
+    metadata:
+      labels:
+        instanceType: trainium-trn1
+        provisionerType: Karpenter
+        karpenterVersion: 1.0.6
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: trainium-trn1
+      requirements:
+        - key: "karpenter.k8s.aws/instance-family"
+          operator: In
+          values: ["trn1"]
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ["on-demand"]
+      taints:
+        - key: aws.amazon.com/neuron
+          value: "true"
+          effect: "NoSchedule"
+  limits:
+    cpu: 1000
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 300s
+  weight: 100
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: inferentia-inf2
+spec:
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        deleteOnTermination: true
+        encrypted: true
+        volumeSize: 500Gi
+        volumeType: gp3
+  amiFamily: AL2
+  amiSelectorTerms:
+    - alias: al2@latest
+  role: "machine-learning"
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: machine-learning
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: machine-learning
+  tags:
+    karpenter.sh/discovery: machine-learning
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: inferentia-inf2
+spec:
+  template:
+    metadata:
+      labels:
+        instanceType: inferentia-inf2
+        provisionerType: Karpenter
+        karpenterVersion: 1.0.6
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: inferentia-inf2
+      requirements:
+        - key: "karpenter.k8s.aws/instance-family"
+          operator: In
+          values: ["inf2"]
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: [ "on-demand"]
+      taints:
+        - key: aws.amazon.com/neuron
+          value: "true"
+          effect: "NoSchedule"
+  limits:
+    cpu: 1000
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 300s
+  weight: 100

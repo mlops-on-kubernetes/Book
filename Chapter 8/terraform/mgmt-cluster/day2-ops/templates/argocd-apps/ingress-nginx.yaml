@@ -16,7 +16,7 @@ spec:
       helm:
         releaseName: ingress-nginx
         valueFiles:
-          - "$values/Chapter 8/packages/ingress-nginx/dev/values.yaml"
+          - "$values/Chapter 8/packages/ingress-nginx/dev/neuron-values.yaml"
     - repoURL: ${GITHUB_URL}
       targetRevision: main
       ref: values
