@@ -2,17 +2,17 @@
   "clientId": "airflow",
   "name": "airflow",
   "description": "",
-  "rootUrl": "https://platform.mlopsbook.online/",
-  "adminUrl": "https://platform.mlopsbook.online/",
-  "baseUrl": "https://platform.mlopsbook.online/airflow",
+  "rootUrl": "https://platform.${DOMAIN}/",
+  "adminUrl": "https://platform.${DOMAIN}/",
+  "baseUrl": "https://platform.${DOMAIN}/airflow",
   "surrogateAuthRequired": false,
   "enabled": true,
   "alwaysDisplayInConsole": false,
   "clientAuthenticatorType": "client-secret",
   "secret": "iJNbWxkN7Ifi9uKEY0NRKAmBnEYkD0uf",
   "redirectUris": [
-    "https://platform.mlopsbook.online/*",
-    "http://platform.mlopsbook.online/*"
+    "https://platform.${DOMAIN}/*",
+    "http://platform.${DOMAIN}/*"
   ],
   "webOrigins": [],
   "notBefore": 0,

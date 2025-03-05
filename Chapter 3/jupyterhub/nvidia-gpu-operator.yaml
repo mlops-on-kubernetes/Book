@@ -1,7 +1,7 @@
 driver:
   enabled: false
   repository: nvcr.io/nvidia
-  version: 525.125.06
+  version: "570.86.15" #525.125.06
   manager:
     env:
       - name: ENABLE_AUTO_DRAIN
