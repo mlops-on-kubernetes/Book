@@ -132,7 +132,10 @@ module "eks" {
 
 resource "kubernetes_storage_class" "ebs-gp3-sc" {
   metadata {
-    name = "gp3"
+    name        = "gp3"
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    }
   }
 
   storage_provisioner = "ebs.csi.eks.amazonaws.com"

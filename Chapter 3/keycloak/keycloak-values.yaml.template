@@ -19,8 +19,8 @@ ingress:
   enabled: true
   hostname: ${KEYCLOAK_HOSTNAME}
   ingressClassName: nginx
-  #annotations:
-  #  nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
   #  use-forwarded-headers: "true"
 
 

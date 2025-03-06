@@ -19,8 +19,8 @@ ingress:
   enabled: true
   hostname: auth.mlopsbook.online
   ingressClassName: nginx
-  #annotations:
-  #  nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "64k"
   #  use-forwarded-headers: "true"
 
 
