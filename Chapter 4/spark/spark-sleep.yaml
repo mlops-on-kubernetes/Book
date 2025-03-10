@@ -41,28 +41,16 @@ spec:
     labels:
       version: 3.5.0
     serviceAccount: so-spark-operator-spark
-    template:
-      spec:
-        securityContext:
-          runAsUser: 0
-          fsGroup: 0
-        containers:
-        - name: spark-kubernetes-driver
-          volumeMounts:
-          - name: spark-script
-            mountPath: /tmp/job
-          - name: kaggle
-            mountPath: /root/.kaggle
-        volumes:
-          - name: spark-script
-            configMap:
-              name: sparkscript
-          - name: kaggle
-            secret:
-              secretName: kaggle
+    secrets: 
+      - name: kaggle
+        path: /home/spark/.kaggle
+    configMaps:
+      - name: sparkscript
+        path: /tmp/job
   executor:
     cores: 1
     instances: 2
+    serviceAccount: so-spark-operator-spark
     memory: "512m"
     labels:
       version: 3.5.0

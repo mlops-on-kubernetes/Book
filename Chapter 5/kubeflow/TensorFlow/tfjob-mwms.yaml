@@ -13,7 +13,7 @@ spec:
         spec:
           containers:
             - name: tensorflow
-              image: 096198301477.dkr.ecr.us-west-2.amazonaws.com/kubeflow-tfjob:efa-v4
+              image: realz/kubeflow-tfjob:v1
               volumeMounts:
                 - mountPath: /train
                   name: training

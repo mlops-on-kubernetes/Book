@@ -1,3 +1,6 @@
+# This script is for processing a dataset using PySpark
+# It downloads the dataset from Kaggle, processes it, and writes the result to a CSV file
+
 import kaggle
 import time
 import logging
@@ -21,6 +24,13 @@ def process_data(input_file):
    # Create a SparkSession
    spark = SparkSession.builder.appName("MediDrugProcessing").getOrCreate()
 
+   if not os.path.exists(input_file):
+       logger.info("Dataset not found. Downloading the dataset")
+       download_dataset(dataset)
+
+
+   while True:
+      time.sleep(10)
    # Read the CSV file
    df = spark.read.csv(input_file, header=True)
    print(df.show())
@@ -55,9 +65,7 @@ if __name__ == "__main__":
    logger.setLevel(logging.INFO)
 
    logger.info("Starting the Spark job")
-   if not os.path.exists(input_file):
-       logger.info("Dataset not found. Downloading the dataset")
-       download_dataset(dataset)
+   
 
    start_time = time.time()
    process_data(input_file)
