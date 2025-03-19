@@ -1,0 +1,61 @@
+apiVersion: "kubeflow.org/v1"
+kind: "PyTorchJob"
+metadata:
+  name: "pytorch-dist-mnist-gloo"
+spec:
+  pytorchReplicaSpecs:
+    Master:
+      replicas: 1
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: kubeflow/pytorch-dist-mnist:v1-736c814
+              command: ["python", "-u", "/opt/mnist/src/mnist_DDP.py"]
+              args: ["--backend", "gloo", "--dir", "/mnt/pytorch/logs", "--save-model"]
+              resources: 
+                limits:
+                  cpu: 1
+                  memory: "2000Mi"
+              volumeMounts:
+              - mountPath: /mnt/pytorch
+                name: training
+                subPath: pytorchjobs
+              - mountPath: /opt/mnist/src/
+                name: pytorchjob-mnist-ddp
+          volumes:
+          - name: training
+            persistentVolumeClaim:
+              claimName: kubelow-efs-shared
+              readOnly: false
+          - name: pytorchjob-mnist-ddp
+            configMap:
+              name: pytorchjob-mnist-ddp
+          #nodeSelector:
+          #  node.kubernetes.io/instance-type: c7i.8xlarge
+    Worker:
+      replicas: 1
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers: 
+            - name: pytorch
+              image: kubeflow/pytorch-dist-mnist:v1-736c814
+              command: ["python", "/opt/mnist/src/mnist_DDP.py"]
+              args: ["--backend", "gloo", "--dir", "/mnt/pytorch/logs", "--save-model"]
+              resources: 
+                limits:
+                  cpu: 1
+                  memory: "2000Mi"
+              volumeMounts:
+              - mountPath: /opt/mnist/src/
+                name: pytorchjob-mnist-ddp
+          volumes:
+          - name: pytorchjob-mnist-ddp
+            configMap:
+              name: pytorchjob-mnist-ddp
+          #nodeSelector:
+          #  node.kubernetes.io/instance-type: c7i.8xlarge
+            
+

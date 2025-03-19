@@ -49,11 +49,14 @@ def tune_mnist(
     mlflow.set_experiment(experiment_name)
 
     config = {
+        # layer_1 and layer_2 are the number of neurons in the first and second layers
         "layer_1": tune.choice([32, 64, 128]),
         "layer_2": tune.choice([64, 128, 256]),
+        # The learning rate
         "lr": tune.loguniform(1e-4, 1e-1),
         "batch_size": tune.choice([32, 64, 128]),
         "experiment_name": experiment_name,
+        # The MLflow tracking URI
         "tracking_uri": mlflow.get_tracking_uri(),
         "data_dir": os.path.join(tempfile.gettempdir(), "mnist_data_"),
         "num_epochs": num_epochs,

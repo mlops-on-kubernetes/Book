@@ -12,9 +12,8 @@ spec:
           containers:
             - name: pytorch
               image: kubeflow/pytorch-dist-mnist:v1-736c814
-              #command: ["/bin/sleep", "infinity"]
-              command: ["python", "-u", "/opt/mnist/src/mnist.py"]
-              args: ["--backend", "nccl", "--dir", "/mnt/pytorch/model"]
+              command: ["python", "-u", "/opt/mnist/src/mnist_DDP.py"]
+              args: ["--backend", "nccl", "--dir", "/mnt/pytorch/logs", "--save-model"]
               resources: 
                 limits:
                   nvidia.com/gpu: 1
@@ -22,11 +21,18 @@ spec:
               - mountPath: /mnt/pytorch
                 name: training
                 subPath: pytorch
+              - mountPath: /opt/mnist/src/
+                name: pytorchjob-mnist-ddp
           volumes:
             - name: training
               persistentVolumeClaim:
                 claimName: kubelow-efs-shared
                 readOnly: false
+            - name: pytorchjob-mnist-ddp
+              configMap:
+                name: pytorchjob-mnist-ddp
+          nodeSelector:
+            node.kubernetes.io/instance-type: g6.xlarge
     Worker:
       replicas: 1
       restartPolicy: OnFailure
@@ -35,8 +41,17 @@ spec:
           containers: 
             - name: pytorch
               image: kubeflow/pytorch-dist-mnist:v1-736c814
-              command: ["python", "/opt/mnist/src/mnist.py"]
-              args: ["--backend", "nccl"]
+              command: ["python", "/opt/mnist/src/mnist_DDP.py"]
+              args: ["--backend", "nccl", "--dir", "/mnt/pytorch/logs", "--save-model"]
               resources: 
                 limits:
                   nvidia.com/gpu: 1
+              volumeMounts:
+              - mountPath: /opt/mnist/src/
+                name: pytorchjob-mnist-ddp
+          volumes:
+          - name: pytorchjob-mnist-ddp
+            configMap:
+              name: pytorchjob-mnist-ddp
+          nodeSelector:
+            node.kubernetes.io/instance-type: g6.xlarge

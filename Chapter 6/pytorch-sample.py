@@ -1,3 +1,9 @@
+# A modfied version of the Ray PyTorch MNIST example
+# https://docs.ray.io/en/latest/train/user-guides/data-loading-preprocessing.html
+
+"""An example showing how to use Pytorch Lightning training, Ray Tune
+HPO, and MLflow autologging all together."""
+
 import os
 from typing import Dict
 
@@ -118,7 +124,7 @@ def train_func_per_worker(config: Dict):
         test_loss /= len(test_dataloader)
         accuracy = num_correct / num_total
 
-        # [3] Report metrics to Ray Train
+        # Report metrics to Ray Train
         # ===============================
         ray.train.report(metrics={"loss": test_loss, "accuracy": accuracy})
 
@@ -142,7 +148,7 @@ def train_fashion_mnist(num_workers=5, use_gpu=False):
         scaling_config=scaling_config,
     )
 
-    # [4] Start distributed training
+    # Start distributed training
     # Run `train_func_per_worker` on all workers
     # =============================================
     result = trainer.fit()

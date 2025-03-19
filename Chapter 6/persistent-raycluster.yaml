@@ -8,7 +8,7 @@ spec:
   enableInTreeAutoscaling: true
   autoscalerOptions:
     upscalingMode: Conservative
-    idleTimeoutSeconds: 120
+    idleTimeoutSeconds: 600
   headGroupSpec:
     rayStartParams: {}
     template:

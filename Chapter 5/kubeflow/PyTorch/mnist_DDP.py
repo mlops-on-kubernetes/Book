@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import argparse
 import os
+import time
 
 import torch
 import torch.distributed as dist
@@ -12,7 +13,7 @@ from tensorboardX import SummaryWriter
 from torch.utils.data import DistributedSampler
 from torchvision import datasets, transforms
 
-
+# Define the neural network architecture.
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -31,7 +32,7 @@ class Net(nn.Module):
         x = self.fc2(x)
         return F.log_softmax(x, dim=1)
 
-
+# Define the training and testing functions.
 def train(args, model, device, train_loader, epoch, writer):
     model.train()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
@@ -58,7 +59,7 @@ def train(args, model, device, train_loader, epoch, writer):
             niter = epoch * len(train_loader) + batch_idx
             writer.add_scalar("loss", loss.item(), niter)
 
-
+# Define the testing function.
 def test(model, device, test_loader, writer, epoch):
     model.eval()
 
@@ -211,13 +212,23 @@ def main():
         batch_size=args.test_batch_size,
         sampler=DistributedSampler(test_ds),
     )
+    
+    start = time.time()
 
+
+    # Train and test the model.
     for epoch in range(1, args.epochs + 1):
         train(args, model, device, train_loader, epoch, writer)
         test(model, device, test_loader, writer, epoch)
+    
+    end = time.time()
+    print(f"Training and testing took: {end-start} seconds.")
 
-    if args.save_model:
-        torch.save(model.state_dict(), "mnist_cnn.pt")
+    # Save the model if --save-model is specified and the rank is 0.
+    if args.save_model and (os.environ["RANK"] == "0"):
+        print("Saving model to {}".format(args.dir))
+        checkpoint_file = os.path.join(args.dir, "mnist_cnn.pt")
+        torch.save(model.state_dict(), checkpoint_file)
 
 
 if __name__ == "__main__":
