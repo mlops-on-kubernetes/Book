@@ -80,6 +80,7 @@ singleuser:
       readOnly: false
     dynamic:
       storageClass: gp3
+    capacity: 100Gi
   allowPrivilegeEscalation: true
   extraPodConfig:
     securityContext:

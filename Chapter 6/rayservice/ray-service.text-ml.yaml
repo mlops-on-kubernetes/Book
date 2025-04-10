@@ -7,20 +7,21 @@ kind: RayService
 metadata:
   name: rs-text-sum
 spec:
-  # serveConfigV2 takes a yaml multi-line scalar, which should be a Ray Serve multi-application config. See https://docs.ray.io/en/latest/serve/multi-app.html.
+  # serveConfigV2 takes a yaml multi-line scalar, which should be a Ray Serve multi-application config. 
+  # See https://docs.ray.io/en/latest/serve/multi-app.html.
   serveConfigV2: |
     applications:
       - name: text_ml_app
-        import_path: text_ml.app
         route_prefix: /summarize_translate
         runtime_env:
-          working_dir: "https://github.com/mlops-on-kubernetes/Book/raw/main/Chapter%206/serve-config.zip"
+          working_dir: "https://github.com/mlops-on-kubernetes/Book/raw/refs/heads/main/Chapter%206/serve-config.zip"
           pip:
             - torch
             - transformers
+        import_path: text_ml.app
         deployments:
           - name: Translator
-            min_replicas: 0
+            min_replicas: 1
             max_replicas: 2
             ray_actor_options:
               num_cpus: 0.2
@@ -39,12 +40,9 @@ spec:
     ######################headGroupSpecs#################################
     # Ray head pod template.
     headGroupSpec:
-      # The `rayStartParams` are used to configure the `ray start` command.
-      # See https://github.com/ray-project/kuberay/blob/master/docs/guidance/rayStartParams.md for the default settings of `rayStartParams` in KubeRay.
-      # See https://docs.ray.io/en/latest/cluster/cli.html#ray-start for all available options in `rayStartParams`.
       rayStartParams:
         dashboard-host: '0.0.0.0'
-      #pod template
+      # Head Pod Template
       template:
         spec:
           containers:
@@ -66,6 +64,7 @@ spec:
                   name: client
                 - containerPort: 8000
                   name: serve
+    ######################workerGroupSpecs#################################
     workerGroupSpecs:
       # the pod replicas in this group typed worker
       - replicas: 2
@@ -73,11 +72,8 @@ spec:
         maxReplicas: 5
         # logical group name, for this called small-group, also can be functional
         groupName: small-group
-        # The `rayStartParams` are used to configure the `ray start` command.
-        # See https://github.com/ray-project/kuberay/blob/master/docs/guidance/rayStartParams.md for the default settings of `rayStartParams` in KubeRay.
-        # See https://docs.ray.io/en/latest/cluster/cli.html#ray-start for all available options in `rayStartParams`.
         rayStartParams: {}
-        #pod template
+        # Worker Pod Template
         template:
           spec:
             containers:
