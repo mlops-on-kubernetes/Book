@@ -2,7 +2,37 @@
 
 This guide walks through the steps to deploy [vLLM](https://github.com/vllm-project/vllm) on a Ray cluster running in Kubernetes. vLLM is a high-throughput and memory-efficient LLM inference engine. When combined with Ray, you can scale inference workloads efficiently across a Kubernetes cluster.
 
-## Step 1: Configure Hugging Face API Access
+## Step 1: Prepare Karpenter Settings
+
+Before deploying vLLM, make two essential adjustments to ensure model downloads and container images are handled properly during initialization.
+
+### 1.1 Extend Karpenter Node TTL
+
+If you're using a general-purpose Karpenter node pool, update its configuration to ensure it does not terminate nodes too quickly. The default TTL may cause instance termination in as little as 30 seconds if there are no ready pods. Since the Ray container image is approximately 11 GB, allow more time for image pull and initialization.
+
+Set `ttlSecondsAfterEmpty` to a higher value, such as 600 seconds (10 minutes), in your provisioner:
+
+```yaml
+spec:
+  disruption:
+  ttlSecondsAfterEmpty: 600
+```
+
+### 1.2 Increase Ephemeral Storage for Model Caching
+
+The default ephemeral storage might not be sufficient for models like Meta LLaMA 3 8B. Increase the node's ephemeral storage to at least 200Gi by modifying the corresponding `EC2NodeClass`:
+
+```yaml
+spec:
+  ephemeralStorage:
+    size: 200Gi
+```
+
+This ensures enough temporary space is available on the node to download and cache the model files.
+
+---
+
+## Step 2: Configure Hugging Face API Access
 
 To download models from the Hugging Face Hub, vLLM needs access to your Hugging Face account. This is typically done using a Hugging Face API token.
 
@@ -39,5 +69,81 @@ Apply the manifest using the following command:
 kubectl apply -f ray-service.vllm.yaml
 ```
 
+
+
+> **Note**: The \`rayproject/ray-ml:2.33.0.914af0-py311\` container image used in this deployment is approximately 11 GB in size. On an m5a.xlarge EC2 instance, which supports up to 10 Gbps network throughput, pulling this image can take 10-15 minutes depending on current network conditions. Be patient—this is expected behavior.
+
 This will deploy a Ray cluster with vLLM configured to serve the [Meta LLaMA 3 8B Instruct model](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct). The service exposes an HTTP route for inference requests and leverages GPU resources for fast generation.
 
+---
+
+## Step 3: Send Inference Requests and Monitor Status
+
+To retrieve head service name, run:
+
+```
+kubectl get svc | grep head-svc
+```
+
+Look for a service name similar to \`llama-3-8b-raycluster-xxxxx-head-svc\`.
+
+
+
+To monitor deployment status, you can open the Ray Dashboard at any time.
+
+### 3.0 Open the Ray Dashboard
+
+1. Set up port forwarding for the dashboard (replace with your head service name):
+
+```bash
+kubectl port-forward svc/llama-3-8b-raycluster-<suffix>-head-svc 8265:8265
+```
+
+2. In your browser, go to [http://localhost:8265](http://localhost:8265)
+3. Click the **Serve** tab to see the status of your deployed model
+
+---
+
+### 3.2 Port Forward the Head Service
+
+Use the service name from the previous step to port forward:
+
+```bash
+kubectl port-forward svc/<head-service-name> 8000:8000
+```
+
+Replace `<head-service-name>` with the actual name you retrieved.
+kubectl port-forward svc/llama-3-8b-head-svc 8000:8000
+
+````
+
+### 3.3 Send a Test Request
+
+Use `curl` to send a test prompt:
+
+```bash
+curl http://localhost:8000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "messages": [
+      {"role": "user", "content": "What is Ray Serve?"}
+    ]
+  }'
+````
+
+You should receive a streaming response or a JSON payload with the model's completion.
+
+If you see an error like this:
+
+```
+Path '/v1/chat/completions' not found. Ping http://localhost:8000/-/routes for available routes.
+```
+
+It means the model server has not yet fully initialized. Wait a minute and try again once the `/v1/chat/completions` route appears in the output of:
+
+````bash
+curl http://localhost:8000/-/routes
+```. Adjust the prompt or parameters as needed to match your application use case. with vLLM configured to serve the [Meta LLaMA 3 8B Instruct model](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct). The service exposes an HTTP route for inference requests and leverages GPU resources for fast generation.
+
+````
