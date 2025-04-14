@@ -27,5 +27,17 @@ This secret will be mounted into the vLLM pods so the engine can authenticate wi
 
 ---
 
-Next step: setting up the Ray cluster and deploying the `ray-service.vllm.yaml` manifest.
+## Step 2: Apply the vLLM RayService Manifest
+
+Once the secret is created, you can deploy the vLLM workload using the provided RayService manifest.
+
+The file is named `ray-service.vllm.yaml` and is included in the GitHub repository for this book. It is based on the official example from the [KubeRay repository](https://github.com/ray-project/kuberay/blob/master/ray-operator/config/samples/vllm/ray-service.vllm.yaml).
+
+Apply the manifest using the following command:
+
+```bash
+kubectl apply -f ray-service.vllm.yaml
+```
+
+This will deploy a Ray cluster with vLLM configured to serve the Meta LLaMA 3 8B Instruct model. The service exposes an HTTP route for inference requests and leverages GPU resources for fast generation.
 
