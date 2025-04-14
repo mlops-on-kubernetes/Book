@@ -39,5 +39,5 @@ Apply the manifest using the following command:
 kubectl apply -f ray-service.vllm.yaml
 ```
 
-This will deploy a Ray cluster with vLLM configured to serve the Meta LLaMA 3 8B Instruct model. The service exposes an HTTP route for inference requests and leverages GPU resources for fast generation.
+This will deploy a Ray cluster with vLLM configured to serve the [Meta LLaMA 3 8B Instruct model](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct). The service exposes an HTTP route for inference requests and leverages GPU resources for fast generation.
 
