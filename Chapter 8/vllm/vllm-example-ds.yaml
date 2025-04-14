@@ -3,9 +3,10 @@ servingEngineSpec:
   - name: "opt125m"
     repository: "vllm/vllm-openai"
     tag: "v0.8.2"
-    modelURL: "facebook/opt-125m"
+    modelURL: "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
     replicaCount: 1
     requestCPU: 6
     requestMemory: "16Gi"
-    pvcStorage: "50Gi"
     requestGPU: 1
+    vllmConfig:
+      extraArgs: ["--dtype", "half"]

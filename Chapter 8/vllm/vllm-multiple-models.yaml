@@ -2,7 +2,7 @@ servingEngineSpec:
   modelSpec:
   - name: "deepscaler"
     repository: "vllm/vllm-openai"
-    tag: "latest"
+    tag: "v0.8.2"
     modelURL: "agentica-org/DeepScaleR-1.5B-Preview"
     replicaCount: 1
     requestCPU: 6
@@ -10,7 +10,7 @@ servingEngineSpec:
     requestGPU: 1
   - name: "opt125m"
     repository: "vllm/vllm-openai"
-    tag: "latest"
+    tag: "v0.8.2"
     modelURL: "facebook/opt-125m"
     replicaCount: 1
     requestCPU: 6
