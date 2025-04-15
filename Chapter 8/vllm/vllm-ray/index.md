@@ -1,6 +1,6 @@
 # Deploying vLLM on Ray
 
-This guide walks through the steps to deploy [vLLM](https://github.com/vllm-project/vllm) on a Ray cluster running in Kubernetes.
+This guide walks through the steps to deploy [vLLM](https://github.com/vllm-project/vllm) on a Ray cluster running in Kubernetes.&#x20;
 
 ## Step 1: Prepare Karpenter Settings
 
@@ -58,13 +58,11 @@ This secret will be mounted into the vLLM pods so the engine can authenticate wi
 
 ## Step 3: Deploy vLLM with RayService
 
-Once the secret is created, you can deploy the vLLM workload using the provided RayService manifest.
-
-The file is named `ray-service.vllm.yaml` and is included in the GitHub repository for this book. It is based on the official example from the [KubeRay repository](https://github.com/ray-project/kuberay/blob/master/ray-operator/config/samples/vllm/ray-service.vllm.yaml).
+Once the secret is created, you can deploy the vLLM workload using the provided RayService manifest \`ray-service.vllm.yaml\`. 
 
 Apply the manifest using the following command:
 
-> **Note:** The `rayproject/ray-ml:2.33.0.914af0-py311` Docker image is approximately 10 GB in size. On an `m5a.xlarge` EC2 instance, which supports up to 10 Gbps network throughput, pulling this image can take several minutes depending on current network conditions. Be patient—this is expected behavior.
+> **Note:** The `rayproject/ray-ml:2.33.0.914af0-py311` Docker image is approximately 11 GB in size. On an `m5a.xlarge` EC2 instance, which supports up to 10 Gbps network throughput, pulling this image can take several minutes depending on current network conditions. Be patient—this is expected behavior.
 
 ```bash
 kubectl apply -f ray-service.vllm.yaml
