@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-load-generator
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-load-generator
+  template:
+    metadata:
+      labels:
+        app: vllm-load-generator
+    spec:
+      containers:
+      - name: runner
+        image: ubuntu:24.04
+        env:
+        - name: DEBIAN_FRONTEND
+          value: noninteractive
+        command: ["bash", "-c"]
+        args:
+          - |
+            apt update && \
+            DEBIAN_FRONTEND=noninteractive apt install -y curl python3-pip python3-openai curl && \
+            curl -O https://raw.githubusercontent.com/vllm-project/production-stack/refs/heads/main/tutorials/assets/example-10-load-generator.py && \
+            python3 example-10-load-generator.py --openai_api_base http://vllm-router-service:80/v1
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"

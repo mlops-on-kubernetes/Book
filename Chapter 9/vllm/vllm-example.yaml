@@ -1,0 +1,14 @@
+servingEngineSpec:
+  labels:
+    app: "vllm-engine"
+  routerSpec:
+  - routingLogic: "roundrobin"
+  modelSpec:
+  - name: "opt125m"
+    repository: "vllm/vllm-openai"
+    tag: "v0.8.2"
+    modelURL: "agentica-org/DeepScaleR-1.5B-Preview"
+    replicaCount: 1
+    requestCPU: 6
+    requestMemory: "16Gi"
+    requestGPU: 1

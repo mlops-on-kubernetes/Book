@@ -1,0 +1,7 @@
+apiVersion: eks.amazonaws.com/v1
+kind: NodeClass
+metadata:
+  name: large-disk-nodes
+spec:
+  ephemeralStorage:
+    size: "160Gi"
