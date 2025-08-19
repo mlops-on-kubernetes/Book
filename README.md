@@ -1,7 +1,14 @@
+<div align="right">
+  <a href="https://github.com/mlops-on-kubernetes/Book">
+    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" width="32" height="32">
+  </a>
+</div>
+
 # 🚀 Real-world ML systems with Kubernetes
 
 <div align="center">
-  <img src="Images/Book Image.png" alt="Real-world ML systems with Kubernetes Book Cover" width="600" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: 30px 0;"/>
+  <img src="Images/Book-Image-2.jpg" alt="Real-world ML systems with Kubernetes Book Cover" width="800" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: 30px 0;"/>
+  <p>Pier60 Clearwater Beach, Florida</p>
 </div>
 
 ## 📖 About This Book
