@@ -4,14 +4,14 @@
   </a>
 </div>
 
-# 🚀 Real-world ML systems with Kubernetes
+# Real-world ML systems with Kubernetes
 
 <div align="center">
   <img src="Images/Book-Image-2.jpg" alt="Real-world ML systems with Kubernetes Book Cover" width="800" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: 30px 0;"/>
   <p>Pier60 Clearwater Beach, Florida</p>
 </div>
 
-## 📖 About This Book
+## About This Book
 
 Machine learning is no longer a research project–it's infrastructure. It's operations. It's pipelines, training, and inference. From recommending what to watch next to flagging fraudulent transactions, ML systems have become core components of modern software. But while building a model in a notebook is straightforward, scaling and deploying that model reliably in production is where most teams fail. According to Gartner, up to 85% of ML projects never reach their intended impact. Why? Because the hardest part isn't the model, it's everything around it.
 
@@ -19,27 +19,27 @@ Operationalizing machine learning means taking a promising prototype and integra
 
 This book teaches you how to design and operate scalable ML systems using Kubernetes. You'll learn the tools, patterns, and architectural principles needed to move machine learning beyond experimentation and into production safely, reliably, and repeatably. Whether you're building an internal platform or scaling an AI product, Kubernetes gives you the foundation to operationalize machine learning like software.
 
-## 🎯 What You'll Learn
+## What You'll Learn
 
 This book covers the essential topics for building production-ready ML systems on Kubernetes:
 
-🔥 **Accelerating machine learning innovation using MLOps and Kubernetes**  
-⚙️ **Fundamentals of Kubernetes**  
-🏗️ **Building an ML Platform on Kubernetes**  
-🌊 **Scalable Data Pipelines with Kubernetes**  
-🧠 **Training Machine Learning Models on Kubernetes**  
-⚡ **Distributed Computing with Ray and Kubernetes**  
-🎯 **Operationalizing ML Models with Kubernetes**  
-🤖 **Serving LLMs on Kubernetes**  
-👁️ **Observing ML Applications in Kubernetes**
+- **Accelerating machine learning innovation using MLOps and Kubernetes**  
+- **Fundamentals of Kubernetes**  
+- **Building an ML Platform on Kubernetes**  
+- **Scalable Data Pipelines with Kubernetes**  
+- **Training Machine Learning Models on Kubernetes**  
+- **Distributed Computing with Ray and Kubernetes**  
+- **Operationalizing ML Models with Kubernetes**  
+- **Serving LLMs on Kubernetes**  
+- **Observing ML Applications in Kubernetes**
 
-## 🌟 Open Source & Support
+## Open Source & Support
 
 We are open sourcing this book to make MLOps knowledge accessible to everyone. You can find the complete book content with pdf version at: [GitHub Repository - Coming Soon]
 
 If you find this book valuable and would like to support our work, you can purchase the Kindle edition: [Amazon Kindle - Coming Soon]
 
-# 🙏 Acknowledgements
+# Acknowledgements
 
 ## Re Alvarez Parmar
 
@@ -71,20 +71,12 @@ I also acknowledge the authors whose books on related topics have influenced my 
 
 Finally, I want to recognize the wealth of knowledge shared through various online platforms including Medium, GitHub, and Reddit. These resources have been an invaluable source of cutting-edge information, practical tips, and real-world experiences. The discussions, code snippets, and articles I found on these platforms helped me refine my technical demonstrations and elevate the overall quality of my work. The global community of developers and data scientists who freely share their knowledge have been silent contributors to this book, and I am deeply appreciative of their collective wisdom.
 
-# 👥 About the Authors
+# About the Authors
 
 ## Elamaran (Ela) Shanmugam
-
-<div align="center">
-  <img src="Images/Ela's Family - Niagara.jpg" alt="Elamaran Shanmugam" width="500" style="border-radius: 10px; margin: 20px 0;"/>
-</div>
 
 Elamaran (Ela) Shanmugam is a Sr. Specialist Solutions Architect with Amazon Web Services with over 20 years of experience in architecting, developing and day 2 operations of large scale enterprise systems and applications. Ela helps AWS customers and partners to build products and services using modern technologies to enable their business. Ela is a Container, App Modernization, Observability, Generative AI and Machine Learning SME and helps AWS partners and customers design and build scalable, secure, and optimized workloads on AWS. Being a Sr. technologist, Ela's focus is on modern application development, cloud migration, modernization and automation. Being at AWS, Ela enjoys contributing to open source, public speaking, mentoring, and publishing engaging technical content such as AWS Whitepapers, AWS Blogs, Internal articles. Ela is based out of Tampa, Florida, and you can reach Ela on Twitter @IamElaShan and elamaran11 on GitHub.
 
 ## Re Alvarez Parmar
-
-<div align="center">
-  <img src="Images/Re Alvarez Parmar.png" alt="Re Alvarez Parmar" width="300" style="border-radius: 10px; margin: 20px 0;"/>
-</div>
 
 Re Alvarez Parmar has spent over two decades architecting, building, and operating enterprise systems and infrastructure. In his current role at AWS as Principal Solutions Architect, he helps some of most the sophisticated Automotive companies modernize and scale their software architecture using cloud. His focus over the past few years has been cloud-native architecture, modern application development, and distributed systems.
