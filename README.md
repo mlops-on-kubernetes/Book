@@ -35,9 +35,9 @@ This book covers the essential topics for building production-ready ML systems o
 
 ## Open Source & Support
 
-We are open sourcing this book to make MLOps knowledge accessible to everyone. You can find the complete book content with pdf version at: [GitHub Repository - Coming Soon]
+We are open sourcing this book to make MLOps knowledge accessible to everyone. You can find the complete book content with PDF version in this repository - Book.pdf will be added soon!
 
-If you find this book valuable and would like to support our work, you can purchase the Kindle edition: [Amazon Kindle - Coming Soon]
+If you find this book valuable and would like to support our work, you can purchase the Kindle edition: [📚 Available on Amazon Kindle](https://www.amazon.com/gp/product/B0FQ4BFHLV/ref=kinw_myk_ro_title)
 
 # Acknowledgements
 
