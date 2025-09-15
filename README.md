@@ -38,38 +38,6 @@ We are open sourcing this book to make MLOps knowledge accessible to everyone. Y
 
 If you find this book valuable and would like to support our work, you can purchase the Kindle edition: [📚 Available on Amazon Kindle](https://www.amazon.com/gp/product/B0FQ4BFHLV/ref=kinw_myk_ro_title)
 
-# Acknowledgements
-
-## Re Alvarez Parmar
-
-<div align="center">
-  <img src="Images/Re Alvarez Parmar.png" alt="Re Alvarez Parmar" width="300" style="border-radius: 10px; margin: 20px 0;"/>
-</div>
-
-I'd like to thank my family for letting me write this book. Without them nothing will be possible.
-
-At AWS, I'd like to thank so many colleagues, including, Jafar Shameem, Rohit Arora, Anish Kantawala, Michael Hausenblas, Apoorva Kulkarni, Vara Bonthu, Florian Stahl, Simon Reichert and all the contributors to the Data/AI on EKS project.
-
-## Elamaran Shanmugam
-
-<div align="center">
-  <img src="Images/Elamaran Shanmugam.png" alt="Elamaran Shanmugam" width="300" style="border-radius: 10px; margin: 20px 0;"/>
-</div>
-
-As I reflect on the journey of writing this book, I am filled with gratitude for all those who have supported me along the way. This book represents not just my technical knowledge, but also the culmination of countless interactions, learning experiences, and support from numerous individuals who have contributed to its creation.
-
-First and foremost, I want to express my deepest gratitude to my family - my loving wife Nila, and my wonderful children Shivani and Theju. Their unwavering support and understanding as I dedicated countless evenings and weekends to this project has been the foundation of my success. Nila's patience during long writing sessions, her encouragement during moments of doubt, and her willingness to take on extra responsibilities to give me the time and space to work have been invaluable. My children's understanding when I missed family time and their bright smiles that kept me going have meant the world to me. This book is as much a testament to their love and support as it is to my efforts.
-
-Special thanks to my colleagues at Amazon who provided invaluable guidance and reviewed my approaches and architectures throughout this book. Their expertise in cloud computing, machine learning, and Kubernetes has been instrumental in refining my ideas and ensuring the accuracy and relevance of my content. The time they took from their busy schedules to offer insights, challenge my assumptions, and share real-world experiences has significantly enhanced the quality and practicality of this book. Their contributions have made this work not just mine, but a collaborative effort reflecting the collective knowledge of our Kubernetes and Machine Learning community.
-
-I am indebted to my friends who served as my steadfast cheerleaders, offering constant encouragement and motivation throughout this journey. Their genuine interest in my progress, their willingness to listen to my ideas (even when they were highly technical), and words of encouragement during challenging times kept me going. They reminded me of the importance of my work when I was too close to see it, and celebrated my milestones, no matter how small. Their friendship and support have been a source of strength and inspiration throughout this process.
-
-My gratitude extends to the vibrant open-source communities, particularly Ray, MLFlow, Spark, Kubeflow and others, whose innovations have inspired much of my work. The spirit of collaboration and knowledge-sharing in these communities has been a guiding light for me. I've built upon the foundations they have laid, and I hope this book contributes back to the collective knowledge pool.
-
-I also acknowledge the authors whose books on related topics have influenced my perspective and approach. Their works have been my teachers, challenging me to think deeper and strive for clarity in my explanations. The insights I've gained from their writings have shaped my understanding of the field and influenced how I've chosen to present complex topics.
-
-Finally, I want to recognize the wealth of knowledge shared through various online platforms including Medium, GitHub, and Reddit. These resources have been an invaluable source of cutting-edge information, practical tips, and real-world experiences. The discussions, code snippets, and articles I found on these platforms helped me refine my technical demonstrations and elevate the overall quality of my work. The global community of developers and data scientists who freely share their knowledge have been silent contributors to this book, and I am deeply appreciative of their collective wisdom.
-
 # About the Authors
 
 ## Elamaran (Ela) Shanmugam
